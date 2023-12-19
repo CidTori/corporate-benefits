@@ -1,4 +1,4 @@
-package com.example.wedoogift.backend.domain.company;
+package com.example.backend.domain.company;
 
 import java.math.BigDecimal;
 

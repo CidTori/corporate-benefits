@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: demo
+      changes:
+        - createTable:
+            tableName: company
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_company
+  - changeSet:
+      id: 2
+      author: demo
+      changes:
+        - createTable:
+            tableName: deposit
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_deposit
+              - column:
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: type
+                  type: TINYINT
+              - column:
+                  name: amount
+                  type: DECIMAL
+              - column:
+                  name: reception_date
+                  type: DATE
+  - changeSet:
+      id: 3
+      author: demo
+      changes:
+        - createTable:
+            tableName: user
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_user
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: deposit
+            constraintName: FK_DEPOSIT_ON_USER
+            referencedColumnNames: id
+            referencedTableName: user

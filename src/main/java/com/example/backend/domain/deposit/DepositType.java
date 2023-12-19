@@ -1,4 +1,4 @@
-package com.example.wedoogift.backend.domain.deposit;
+package com.example.backend.domain.deposit;
 
 import java.time.LocalDate;
 

@@ -1,11 +1,11 @@
-package com.example.wedoogift.backend.domain.deposit;
+package com.example.backend.domain.deposit;
 
 import lombok.Value;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Value(staticConstructor = "of")
+@Value
 public class Deposit {
     DepositType type;
     BigDecimal amount;

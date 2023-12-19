@@ -1,8 +1,8 @@
-package com.example.wedoogift.backend.domain.deposit;
+package com.example.backend.domain.deposit;
 
-import com.example.wedoogift.backend.domain.company.Company;
-import com.example.wedoogift.backend.domain.company.InsufficientBalanceException;
-import com.example.wedoogift.backend.domain.user.User;
+import com.example.backend.domain.company.InsufficientBalanceException;
+import com.example.backend.domain.user.User;
+import com.example.backend.domain.company.Company;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.util.function.Supplier;
 
-import static com.example.wedoogift.backend.domain.deposit.DepositType.*;
+import static com.example.backend.domain.deposit.DepositType.*;
 import static java.time.LocalDate.now;
 
 @Service
@@ -30,6 +30,6 @@ public class DepositService {
         if (company.balance().compareTo(amount) < 0)
             throw new InsufficientBalanceException("The balance is insufficient for a deposit of " + amount);
 
-        user.addDeposit(Deposit.of(meal, amount, now(clockSupplier.get())));
+        user.addDeposit(new Deposit(meal, amount, now(clockSupplier.get())));
     }
 }

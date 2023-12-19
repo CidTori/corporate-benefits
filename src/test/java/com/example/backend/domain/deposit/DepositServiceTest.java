@@ -1,8 +1,8 @@
-package com.example.wedoogift.backend.domain.deposit;
+package com.example.backend.domain.deposit;
 
-import com.example.wedoogift.backend.domain.company.Company;
-import com.example.wedoogift.backend.domain.company.InsufficientBalanceException;
-import com.example.wedoogift.backend.domain.user.User;
+import com.example.backend.domain.company.InsufficientBalanceException;
+import com.example.backend.domain.user.User;
+import com.example.backend.domain.company.Company;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,6 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import static java.math.BigDecimal.valueOf;
@@ -34,7 +36,7 @@ class DepositServiceTest {
     void sendGiftDeposit_ok() throws InsufficientBalanceException {
         final LocalDate receptionDate = LocalDate.of(2023, Month.DECEMBER, 17);
         final Company tesla = new Company(valueOf(1000));
-        User john = new User();
+        User john = new UserImpl();
         when(clockSupplier.get()).thenReturn(fixed(receptionDate.atStartOfDay(systemDefault()).toInstant(), systemDefault()));
 
         depositService.sendGiftDeposit(tesla, john, valueOf(100));
@@ -46,12 +48,26 @@ class DepositServiceTest {
     @Test
     void sendMealDeposit_ko() {
         final Company apple = new Company(valueOf(0));
-        User jessica = new User();
+        User jessica = new UserImpl();
 
         assertThrows(
                 InsufficientBalanceException.class,
                 () -> depositService.sendMealDeposit(apple, jessica, valueOf(50))
         );
+    }
+
+    static class UserImpl extends User {
+        List<Deposit> deposits = new ArrayList<>();
+
+        @Override
+        public void addDeposit(Deposit deposit) {
+            deposits.add(deposit);
+        }
+
+        @Override
+        protected List<Deposit> getDeposits() {
+            return deposits;
+        }
     }
 
 }
