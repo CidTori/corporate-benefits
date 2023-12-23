@@ -13,6 +13,9 @@ databaseChangeLog:
                     nullable: false
                     primaryKey: true
                     primaryKeyName: pk_company
+              - column:
+                  name: balance
+                  type: DECIMAL
   - changeSet:
       id: 2
       author: demo
@@ -23,12 +26,13 @@ databaseChangeLog:
               - column:
                   name: id
                   type: BIGINT
+                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
                     primaryKeyName: pk_deposit
               - column:
-                  name: user_id
+                  name: employee_id
                   type: BIGINT
               - column:
                   name: type
@@ -44,7 +48,7 @@ databaseChangeLog:
       author: demo
       changes:
         - createTable:
-            tableName: user
+            tableName: employee
             columns:
               - column:
                   name: id
@@ -52,10 +56,10 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
-                    primaryKeyName: pk_user
+                    primaryKeyName: pk_employee
         - addForeignKeyConstraint:
-            baseColumnNames: user_id
+            baseColumnNames: employee_id
             baseTableName: deposit
-            constraintName: FK_DEPOSIT_ON_USER
+            constraintName: FK_DEPOSIT_ON_EMPLOYEE
             referencedColumnNames: id
-            referencedTableName: user
+            referencedTableName: employee

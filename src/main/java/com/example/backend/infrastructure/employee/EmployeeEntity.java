@@ -1,4 +1,4 @@
-package com.example.backend.infrastructure.user;
+package com.example.backend.infrastructure.employee;
 
 import com.example.backend.infrastructure.deposit.DepositEntity;
 import jakarta.persistence.Entity;
@@ -8,9 +8,9 @@ import lombok.Data;
 
 import java.util.List;
 
-@Entity(name = "User")
+@Entity(name = "employee")
 @Data
-public class UserEntity {
+public class EmployeeEntity {
     @Id private Long id;
-    @OneToMany(mappedBy = "user") private List<DepositEntity> deposits;
+    @OneToMany(mappedBy = "employee") private List<DepositEntity> deposits;
 }

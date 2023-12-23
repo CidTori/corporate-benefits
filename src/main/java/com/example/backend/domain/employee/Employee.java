@@ -1,4 +1,4 @@
-package com.example.backend.domain.user;
+package com.example.backend.domain.employee;
 
 import com.example.backend.domain.deposit.Deposit;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 import static java.math.BigDecimal.ZERO;
 
-public abstract class User {
+public abstract class Employee {
     public abstract void addDeposit(Deposit deposit);
     protected abstract List<Deposit> getDeposits();
 

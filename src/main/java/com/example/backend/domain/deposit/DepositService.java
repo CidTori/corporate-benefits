@@ -1,8 +1,8 @@
 package com.example.backend.domain.deposit;
 
-import com.example.backend.domain.company.InsufficientBalanceException;
-import com.example.backend.domain.user.User;
 import com.example.backend.domain.company.Company;
+import com.example.backend.domain.company.InsufficientBalanceException;
+import com.example.backend.domain.employee.Employee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,8 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.util.function.Supplier;
 
-import static com.example.backend.domain.deposit.DepositType.*;
+import static com.example.backend.domain.deposit.DepositType.GIFT;
+import static com.example.backend.domain.deposit.DepositType.MEAL;
 import static java.time.LocalDate.now;
 
 @Service
@@ -18,18 +19,25 @@ import static java.time.LocalDate.now;
 public class DepositService {
     private final Supplier<Clock> clockSupplier;
 
-    public void sendGiftDeposit(Company company, User user, BigDecimal amount) throws InsufficientBalanceException {
-        sendDeposit(company, user, amount, GIFT);
+    public void sendGift(Company company, Employee employee, BigDecimal amount) throws InsufficientBalanceException {
+        sendDeposit(GIFT, company, employee, amount);
     }
 
-    public void sendMealDeposit(Company company, User user, BigDecimal amount) throws InsufficientBalanceException {
-        sendDeposit(company, user, amount, MEAL);
+    public void sendMeal(Company company, Employee employee, BigDecimal amount) throws InsufficientBalanceException {
+        sendDeposit(MEAL, company, employee, amount);
     }
 
-    private void sendDeposit(Company company, User user, BigDecimal amount, DepositType meal) throws InsufficientBalanceException {
-        if (company.balance().compareTo(amount) < 0)
+    private void sendDeposit(
+            DepositType meal,
+            Company company,
+            Employee employee,
+            BigDecimal amount
+    ) throws InsufficientBalanceException {
+        if (company.getBalance().compareTo(amount) < 0)
             throw new InsufficientBalanceException("The balance is insufficient for a deposit of " + amount);
 
-        user.addDeposit(new Deposit(meal, amount, now(clockSupplier.get())));
+        company.setBalance(company.getBalance().subtract(amount));
+
+        employee.addDeposit(new Deposit(meal, amount, now(clockSupplier.get())));
     }
 }

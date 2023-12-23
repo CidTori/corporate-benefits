@@ -1,5 +1,12 @@
 package com.example.backend.domain.company;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import java.math.BigDecimal;
 
-public record Company(BigDecimal balance) {}
+@Data
+@AllArgsConstructor
+public final class Company {
+    private BigDecimal balance;
+}

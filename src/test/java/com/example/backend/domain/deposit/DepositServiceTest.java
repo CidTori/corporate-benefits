@@ -1,8 +1,8 @@
 package com.example.backend.domain.deposit;
 
-import com.example.backend.domain.company.InsufficientBalanceException;
-import com.example.backend.domain.user.User;
 import com.example.backend.domain.company.Company;
+import com.example.backend.domain.company.InsufficientBalanceException;
+import com.example.backend.domain.employee.Employee;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,10 +36,10 @@ class DepositServiceTest {
     void sendGiftDeposit_ok() throws InsufficientBalanceException {
         final LocalDate receptionDate = LocalDate.of(2023, Month.DECEMBER, 17);
         final Company tesla = new Company(valueOf(1000));
-        User john = new UserImpl();
+        Employee john = new EmployeeImpl();
         when(clockSupplier.get()).thenReturn(fixed(receptionDate.atStartOfDay(systemDefault()).toInstant(), systemDefault()));
 
-        depositService.sendGiftDeposit(tesla, john, valueOf(100));
+        depositService.sendGift(tesla, john, valueOf(100));
 
         assertEquals(valueOf(100), john.getBalance(receptionDate));
         assertEquals(valueOf(0), john.getBalance(receptionDate.plusYears(1)));
@@ -48,15 +48,15 @@ class DepositServiceTest {
     @Test
     void sendMealDeposit_ko() {
         final Company apple = new Company(valueOf(0));
-        User jessica = new UserImpl();
+        Employee jessica = new EmployeeImpl();
 
         assertThrows(
                 InsufficientBalanceException.class,
-                () -> depositService.sendMealDeposit(apple, jessica, valueOf(50))
+                () -> depositService.sendMeal(apple, jessica, valueOf(50))
         );
     }
 
-    static class UserImpl extends User {
+    static class EmployeeImpl extends Employee {
         List<Deposit> deposits = new ArrayList<>();
 
         @Override
