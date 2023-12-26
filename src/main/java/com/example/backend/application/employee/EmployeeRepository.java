@@ -1,4 +1,4 @@
-package com.example.backend.application;
+package com.example.backend.application.employee;
 
 import com.example.backend.domain.employee.Employee;
 

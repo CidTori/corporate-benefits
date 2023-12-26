@@ -1,3 +1,5 @@
 spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-dev.yaml
+
+jwt.secret: your-256-bit-secretyour-256-bit-secret

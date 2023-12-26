@@ -1,7 +1,7 @@
 package com.example.backend.domain.deposit;
 
 import com.example.backend.domain.company.Company;
-import com.example.backend.domain.company.InsufficientBalanceException;
+import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.employee.Employee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,11 +19,11 @@ import static java.time.LocalDate.now;
 public class DepositService {
     private final Supplier<Clock> clockSupplier;
 
-    public void sendGift(Company company, Employee employee, BigDecimal amount) throws InsufficientBalanceException {
+    public void sendGift(Company company, Employee employee, BigDecimal amount) throws InsufficientCompanyBalanceException {
         sendDeposit(GIFT, company, employee, amount);
     }
 
-    public void sendMeal(Company company, Employee employee, BigDecimal amount) throws InsufficientBalanceException {
+    public void sendMeal(Company company, Employee employee, BigDecimal amount) throws InsufficientCompanyBalanceException {
         sendDeposit(MEAL, company, employee, amount);
     }
 
@@ -32,9 +32,9 @@ public class DepositService {
             Company company,
             Employee employee,
             BigDecimal amount
-    ) throws InsufficientBalanceException {
+    ) throws InsufficientCompanyBalanceException {
         if (company.getBalance().compareTo(amount) < 0)
-            throw new InsufficientBalanceException("The balance is insufficient for a deposit of " + amount);
+            throw new InsufficientCompanyBalanceException("The balance is insufficient for a deposit of " + amount);
 
         company.setBalance(company.getBalance().subtract(amount));
 

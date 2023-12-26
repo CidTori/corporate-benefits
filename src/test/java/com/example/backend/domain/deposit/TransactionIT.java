@@ -1,5 +1,8 @@
 package com.example.backend.domain.deposit;
 
+import com.example.backend.domain.company.Company;
+import com.example.backend.infrastructure.company.CompanyEntity;
+import com.example.backend.infrastructure.employee.EmployeeEntityRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -14,6 +17,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -22,6 +26,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -33,16 +38,17 @@ import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.time.ZoneId.systemDefault;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class DepositServiceIT {
+class TransactionIT {
 
     @Autowired
     TestRestTemplate testRestTemplate;
@@ -53,14 +59,16 @@ class DepositServiceIT {
     @MockBean
     Supplier<Clock> clockSupplier;
 
+    @MockBean
+    EmployeeEntityRepository employeeEntityRepository;
+
     @Test
-    void sendGiftDeposit_ok() {
+    void rollback() {
         LocalDate giftDate = LocalDate.of(2023, JANUARY, 15);
-        LocalDate giftEndDate = giftDate.plusYears(1);
-        LocalDate mealDate = giftDate.plusMonths(1);
-        LocalDate mealEndDate = LocalDate.of(mealDate.plusYears(1).getYear(), MARCH, 1);
         String teslaId = "1234567890";
         String johnId = "1";
+
+        when(employeeEntityRepository.save(any())).thenThrow(IllegalArgumentException.class);
 
         setDateTo(giftDate);
         ResponseEntity<String> giftResponse = testRestTemplate.postForEntity(
@@ -71,60 +79,9 @@ class DepositServiceIT {
                 ),
                 String.class
         );
-        BigDecimal balanceAfterGift = jdbcTemplate.queryForObject("SELECT balance FROM company WHERE id = ?", BigDecimal.class, teslaId);
-        setDateTo(mealDate);
-        ResponseEntity<String> mealResponse = testRestTemplate.postForEntity(
-                "/employees/" + johnId + "/meals",
-                new HttpEntity<>(
-                        Map.of("amount", valueOf(50)),
-                        getDepositHeaders(createJWT(teslaId, giftDate))
-                ),
-                String.class
-        );
-        BigDecimal balanceAfterMeal = jdbcTemplate.queryForObject("SELECT balance FROM company WHERE id = ?", BigDecimal.class, teslaId);
 
-        setDateTo(giftEndDate.minusDays(1));
-        ResponseEntity<Map> balanceBeforeGiftEndDate = testRestTemplate.getForEntity("/employees/" + johnId + "/balance", Map.class);
-        setDateTo(giftEndDate);
-        ResponseEntity<Map> balanceGiftEndDate = testRestTemplate.getForEntity("/employees/" + johnId + "/balance", Map.class);
-        setDateTo(mealEndDate.minusDays(1));
-        ResponseEntity<Map> balanceBeforeMealEndDate = testRestTemplate.getForEntity("/employees/" + johnId + "/balance", Map.class);
-        setDateTo(mealEndDate);
-        ResponseEntity<Map> balanceMealEndDate = testRestTemplate.getForEntity("/employees/" + johnId + "/balance", Map.class);
-
-
-        assertEquals(OK, giftResponse.getStatusCode());
-        assertEquals(OK, mealResponse.getStatusCode());
-        assertEquals(OK, balanceBeforeGiftEndDate.getStatusCode());
-        assertEquals(OK, balanceGiftEndDate.getStatusCode());
-        assertEquals(OK, balanceBeforeMealEndDate.getStatusCode());
-        assertEquals(OK, balanceMealEndDate.getStatusCode());
-
-        assertEquals(valueOf(900), balanceAfterGift);
-        assertEquals(valueOf(850), balanceAfterMeal);
-
-        assertEquals(150, balanceBeforeGiftEndDate.getBody().get("balance"));
-        assertEquals(50, balanceGiftEndDate.getBody().get("balance"));
-        assertEquals(50, balanceBeforeMealEndDate.getBody().get("balance"));
-        assertEquals(0, balanceMealEndDate.getBody().get("balance"));
-    }
-
-    @Test
-    void sendMealDeposit_ko() {
-        LocalDate mealDate = LocalDate.of(2023, JANUARY, 15);
-        String appleId = "1234567890";
-        String jessicaId = "1";
-
-        ResponseEntity<String> mealResponse = testRestTemplate.postForEntity(
-                "/employees/" + jessicaId + "/meals",
-                new HttpEntity<>(
-                        Map.of("amount", valueOf(1050)),
-                        getDepositHeaders(createJWT(appleId, mealDate))
-                ),
-                String.class
-        );
-
-        assertEquals(BAD_REQUEST, mealResponse.getStatusCode());
+        CompanyEntity company = jdbcTemplate.query("SELECT * FROM company WHERE id = " + teslaId, new BeanPropertyRowMapper<>(CompanyEntity.class)).getFirst();
+        assertEquals(valueOf(1000), company.getBalance());
     }
 
     private static HttpHeaders getDepositHeaders(String jwt) {

@@ -1,8 +1,9 @@
 package com.example.backend.domain.deposit;
 
 import com.example.backend.domain.company.Company;
-import com.example.backend.domain.company.InsufficientBalanceException;
+import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.employee.Employee;
+import lombok.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,7 +36,7 @@ class DepositServiceTest {
     DepositService depositService;
 
     @Test
-    void sendGiftDeposit_ok() throws InsufficientBalanceException {
+    void sendGiftDeposit_ok() throws InsufficientCompanyBalanceException {
         final LocalDate giftDate = LocalDate.of(2023, JANUARY, 15);
         final LocalDate giftEndDate = giftDate.plusYears(1);
         final LocalDate mealDate = giftDate.plusMonths(1);
@@ -47,6 +48,8 @@ class DepositServiceTest {
         depositService.sendGift(tesla, john, valueOf(100));
         setDateTo(mealDate);
         depositService.sendMeal(tesla, john, valueOf(50));
+
+        assertEquals(valueOf(850), tesla.getBalance());
 
         assertEquals(valueOf(150), john.getBalance(giftEndDate.minusDays(1)));
         assertEquals(valueOf(50), john.getBalance(giftEndDate));
@@ -60,7 +63,7 @@ class DepositServiceTest {
         final Employee jessica = new EmployeeImpl();
 
         assertThrows(
-                InsufficientBalanceException.class,
+                InsufficientCompanyBalanceException.class,
                 () -> depositService.sendMeal(apple, jessica, valueOf(50))
         );
     }
@@ -70,17 +73,13 @@ class DepositServiceTest {
         when(clockSupplier.get()).thenReturn(fixed(noon, systemDefault()));
     }
 
+    @Getter @Setter
     static class EmployeeImpl extends Employee {
         List<Deposit> deposits = new ArrayList<>();
 
         @Override
         public void addDeposit(Deposit deposit) {
             deposits.add(deposit);
-        }
-
-        @Override
-        protected List<Deposit> getDeposits() {
-            return deposits;
         }
     }
 

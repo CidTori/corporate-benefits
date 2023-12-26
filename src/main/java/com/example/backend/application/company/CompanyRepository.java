@@ -1,4 +1,4 @@
-package com.example.backend.application;
+package com.example.backend.application.company;
 
 import com.example.backend.domain.company.Company;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,6 @@
 package com.example.backend.infrastructure.company;
 
-import com.example.backend.application.CompanyRepository;
+import com.example.backend.application.company.CompanyRepository;
 import com.example.backend.domain.company.Company;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

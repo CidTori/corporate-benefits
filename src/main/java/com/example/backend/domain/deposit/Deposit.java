@@ -11,7 +11,7 @@ public class Deposit {
     BigDecimal amount;
     LocalDate receptionDate;
 
-    public boolean isNotExpired(LocalDate date) {
+    public final boolean isNotExpired(LocalDate date) {
         return type.isNotExpired(date, receptionDate);
     }
 }

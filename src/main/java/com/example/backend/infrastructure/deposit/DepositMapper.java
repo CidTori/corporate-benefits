@@ -5,9 +5,11 @@ import com.example.backend.infrastructure.employee.EmployeeEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
+
+@Mapper(componentModel = SPRING)
 public interface DepositMapper {
     @Mapping(target = "id", ignore = true)
     DepositEntity toEntity(Deposit deposit, EmployeeEntity employee);
-    Deposit toDomain(DepositEntity deposit);
+    Deposit toDomain(DepositEntity d);
 }

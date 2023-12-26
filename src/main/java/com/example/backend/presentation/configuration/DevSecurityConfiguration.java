@@ -1,7 +1,8 @@
-package com.example.backend.presentation;
+package com.example.backend.presentation.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -12,17 +13,9 @@ import static org.springframework.boot.autoconfigure.security.servlet.PathReques
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 import static org.springframework.security.config.Customizer.withDefaults;
 
-//@Profile("dev")
+@Profile("dev")
 @Configuration
 public class DevSecurityConfiguration {
-    @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        //http.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated());
-        http.oauth2ResourceServer((resourceServer) -> resourceServer.jwt(withDefaults()));
-
-        return http.build();
-    }
-
     @Bean
     @Order(HIGHEST_PRECEDENCE)
     SecurityFilterChain swaggerUiSecurityFilterChain(HttpSecurity http) throws Exception {

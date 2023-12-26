@@ -4,3 +4,5 @@ spring:
   h2:
     console:
       enabled: true
+
+jwt.secret: your-256-bit-secretyour-256-bit-secret
