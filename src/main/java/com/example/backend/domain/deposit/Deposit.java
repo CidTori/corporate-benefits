@@ -5,13 +5,12 @@ import lombok.Value;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Value
-public class Deposit {
-    DepositType type;
-    BigDecimal amount;
-    LocalDate receptionDate;
+public abstract class Deposit {
+    protected abstract DepositType getType();
+    public abstract BigDecimal getAmount();
+    protected abstract LocalDate getReceptionDate();
 
     public final boolean isNotExpired(LocalDate date) {
-        return type.isNotExpired(date, receptionDate);
+        return getType().isNotExpired(date, getReceptionDate());
     }
 }

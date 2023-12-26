@@ -17,6 +17,8 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "deposit")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class DepositEntity {
     @Id @GeneratedValue(strategy = IDENTITY) private Long id;
     @ManyToOne private EmployeeEntity employee;

@@ -1,5 +1,6 @@
 package com.example.backend.domain.deposit;
 
+import com.example.backend.application.DepositFactory;
 import com.example.backend.domain.company.Company;
 import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.employee.Employee;
@@ -18,6 +19,7 @@ import static java.time.LocalDate.now;
 @RequiredArgsConstructor
 public class DepositService {
     private final Supplier<Clock> clockSupplier;
+    private final DepositFactory depositFactory;
 
     public void sendGift(Company company, Employee employee, BigDecimal amount) throws InsufficientCompanyBalanceException {
         sendDeposit(GIFT, company, employee, amount);
@@ -38,6 +40,6 @@ public class DepositService {
 
         company.setBalance(company.getBalance().subtract(amount));
 
-        employee.addDeposit(new Deposit(meal, amount, now(clockSupplier.get())));
+        employee.addDeposit(depositFactory.create(meal, amount, now(clockSupplier.get())));
     }
 }

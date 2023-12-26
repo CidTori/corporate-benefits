@@ -1,15 +1,18 @@
 package com.example.backend.domain.deposit;
 
+import com.example.backend.application.DepositFactory;
 import com.example.backend.domain.company.Company;
 import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.employee.Employee;
 import lombok.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -24,6 +27,7 @@ import static java.time.Month.MARCH;
 import static java.time.ZoneId.systemDefault;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Answers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +35,9 @@ class DepositServiceTest {
 
     @Mock
     Supplier<Clock> clockSupplier;
+
+    @Mock(answer = CALLS_REAL_METHODS)
+    DepositFactoryImpl depositFactory;
 
     @InjectMocks
     DepositService depositService;
@@ -41,7 +48,7 @@ class DepositServiceTest {
         final LocalDate giftEndDate = giftDate.plusYears(1);
         final LocalDate mealDate = giftDate.plusMonths(1);
         final LocalDate mealEndDate = LocalDate.of(mealDate.plusYears(1).getYear(), MARCH, 1);
-        final Company tesla = new Company(1234567890L, valueOf(1000));
+        final Company tesla = new CompanyImpl(valueOf(1000));
         final Employee john = new EmployeeImpl();
 
         setDateTo(giftDate);
@@ -59,7 +66,7 @@ class DepositServiceTest {
 
     @Test
     void sendMealDeposit_ko() {
-        final Company apple = new Company(1234567890L, valueOf(0));
+        final Company apple = new CompanyImpl(valueOf(0));
         final Employee jessica = new EmployeeImpl();
 
         assertThrows(
@@ -73,6 +80,14 @@ class DepositServiceTest {
         when(clockSupplier.get()).thenReturn(fixed(noon, systemDefault()));
     }
 
+    @AllArgsConstructor
+    @Getter @Setter
+    static class DepositImpl extends Deposit {
+        private DepositType type;
+        private BigDecimal amount;
+        private LocalDate receptionDate;
+    }
+
     @Getter @Setter
     static class EmployeeImpl extends Employee {
         List<Deposit> deposits = new ArrayList<>();
@@ -83,4 +98,16 @@ class DepositServiceTest {
         }
     }
 
+    @AllArgsConstructor
+    @Getter @Setter
+    static class CompanyImpl extends Company {
+        private BigDecimal balance;
+    }
+
+    private class DepositFactoryImpl implements DepositFactory {
+        @Override
+        public Deposit create(DepositType type, BigDecimal amount, LocalDate receptionDate) {
+            return new DepositImpl(type, amount, receptionDate);
+        }
+    }
 }

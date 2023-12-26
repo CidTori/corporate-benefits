@@ -10,16 +10,15 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class CompanyDatabaseRepository implements CompanyRepository {
-    private final CompanyMapper companyMapper;
     private final CompanyEntityRepository companyEntityRepository;
 
     @Override
     public Optional<Company> findById(Long id) {
-        return companyEntityRepository.findById(id).map(companyMapper::toDomain);
+        return companyEntityRepository.findById(id).map(CompanyAdapter::of);
     }
 
     @Override
     public void save(Company company) {
-        companyEntityRepository.save(companyMapper.toEntity(company));
+        companyEntityRepository.save(((CompanyAdapter) company).getEntity());
     }
 }

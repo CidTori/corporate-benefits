@@ -58,7 +58,7 @@ public class DepositApplicationService {
 
         consumer.accept(company, employee, amount);
 
-        companyRepository.save(company);
-        employeeRepository.save(employee);
+        //companyRepository.save(company);
+        //employeeRepository.save(employee);
     }
 }
