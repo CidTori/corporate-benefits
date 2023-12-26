@@ -8,9 +8,11 @@ import lombok.Data;
 
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.ALL;
+
 @Entity(name = "employee")
 @Data
 public class EmployeeEntity {
     @Id private Long id;
-    @OneToMany(mappedBy = "employee") private List<DepositEntity> deposits;
+    @OneToMany(mappedBy = "employee", cascade = ALL) private List<DepositEntity> deposits;
 }

@@ -1,0 +1,6 @@
+spring:
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-test.yaml
+  h2:
+    console:
+      enabled: true

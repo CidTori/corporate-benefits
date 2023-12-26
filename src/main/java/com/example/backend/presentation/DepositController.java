@@ -25,22 +25,22 @@ public class DepositController {
         return new BalanceResource(depositService.getBalance(employeeId));
     }
 
-    @PostMapping("/employees/{id}/gifts")
+    @PostMapping("/employees/{employeeId}/gifts")
     public void addGift(
             Authentication authentication,
-            @PathVariable Long id,
+            @PathVariable Long employeeId,
             @RequestBody DepositResource deposit
     ) {
-        addDeposit(depositService::sendGift, authentication, id, deposit);
+        addDeposit(depositService::sendGift, authentication, employeeId, deposit);
     }
 
-    @PostMapping("/employees/{id}/meals")
+    @PostMapping("/employees/{employeeId}/meals")
     public void addMeal(
             Authentication authentication,
-            @PathVariable Long id,
+            @PathVariable Long employeeId,
             @RequestBody DepositResource deposit
     ) {
-        addDeposit(depositService::sendMeal, authentication, id, deposit);
+        addDeposit(depositService::sendMeal, authentication, employeeId, deposit);
     }
 
     private void addDeposit(

@@ -7,6 +7,7 @@ import com.example.backend.domain.employee.Employee;
 import com.example.backend.utils.ThrowingTriConsumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -28,10 +29,12 @@ public class DepositApplicationService {
                 .orElseThrow();
     }
 
+    @Transactional
     public void sendGift(Long companyId, Long employeeId, BigDecimal amount) throws InsufficientBalanceException {
         sendDeposit(depositService::sendGift, companyId, employeeId, amount);
     }
 
+    @Transactional
     public void sendMeal(Long companyId, Long employeeId, BigDecimal amount) throws InsufficientBalanceException {
         sendDeposit(depositService::sendMeal, companyId, employeeId, amount);
     }
@@ -41,8 +44,13 @@ public class DepositApplicationService {
             Long employeeId,
             BigDecimal amount
     ) throws InsufficientBalanceException {
+
         final Company company = companyRepository.findById(companyId).orElseThrow();
         final Employee employee = employeeRepository.findById(employeeId).orElseThrow();
+
         consumer.accept(company, employee, amount);
+
+        companyRepository.save(company);
+        employeeRepository.save(employee);
     }
 }

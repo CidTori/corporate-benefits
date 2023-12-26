@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - include:
+      relativeToChangelogFile: true
+      file: db.changelog-master.yaml
+  - changeSet:
+      id: 1
+      author: demo-dev
+      changes:
+        - insert:
+            tableName: company
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1234567890
+              - column:
+                  name: balance
+                  valueNumeric: 1000
+  - changeSet:
+      id: 2
+      author: demo-dev
+      changes:
+        - insert:
+            tableName: employee
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1

@@ -14,8 +14,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class SecurityConfiguration {
     @Bean
     public JwtDecoder jwtDecoder() {
-        String secret = "your-256-bit-secretyour-256-bit-secret";
-        SecretKeySpec secretKey = new SecretKeySpec(secret.getBytes(UTF_8), "HMACSHA256");
+        final String secret = "your-256-bit-secretyour-256-bit-secret";
+        final SecretKeySpec secretKey = new SecretKeySpec(secret.getBytes(UTF_8), "HMACSHA256");
         return NimbusJwtDecoder.withSecretKey(secretKey).build();
     }
 }

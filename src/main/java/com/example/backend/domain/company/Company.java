@@ -8,5 +8,6 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 public final class Company {
+    private Long id;
     private BigDecimal balance;
 }

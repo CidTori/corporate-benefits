@@ -17,4 +17,9 @@ public class CompanyDatabaseRepository implements CompanyRepository {
     public Optional<Company> findById(Long id) {
         return companyEntityRepository.findById(id).map(companyMapper::toDomain);
     }
+
+    @Override
+    public void save(Company company) {
+        companyEntityRepository.save(companyMapper.toEntity(company));
+    }
 }

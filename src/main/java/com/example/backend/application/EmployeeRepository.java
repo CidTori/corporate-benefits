@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface EmployeeRepository {
     Optional<Employee> findById(Long id);
+
+    void save(Employee employee);
 }

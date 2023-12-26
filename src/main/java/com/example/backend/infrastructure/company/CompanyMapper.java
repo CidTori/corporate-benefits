@@ -6,4 +6,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface CompanyMapper {
     Company toDomain(CompanyEntity companyEntity);
+
+    CompanyEntity toEntity(Company company);
 }

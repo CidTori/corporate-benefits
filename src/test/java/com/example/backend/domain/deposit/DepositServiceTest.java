@@ -10,14 +10,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
 import static java.math.BigDecimal.valueOf;
 import static java.time.Clock.fixed;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
 import static java.time.ZoneId.systemDefault;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,26 +36,38 @@ class DepositServiceTest {
 
     @Test
     void sendGiftDeposit_ok() throws InsufficientBalanceException {
-        final LocalDate receptionDate = LocalDate.of(2023, Month.DECEMBER, 17);
-        final Company tesla = new Company(valueOf(1000));
-        Employee john = new EmployeeImpl();
-        when(clockSupplier.get()).thenReturn(fixed(receptionDate.atStartOfDay(systemDefault()).toInstant(), systemDefault()));
+        final LocalDate giftDate = LocalDate.of(2023, JANUARY, 15);
+        final LocalDate giftEndDate = giftDate.plusYears(1);
+        final LocalDate mealDate = giftDate.plusMonths(1);
+        final LocalDate mealEndDate = LocalDate.of(mealDate.plusYears(1).getYear(), MARCH, 1);
+        final Company tesla = new Company(1234567890L, valueOf(1000));
+        final Employee john = new EmployeeImpl();
 
+        setDateTo(giftDate);
         depositService.sendGift(tesla, john, valueOf(100));
+        setDateTo(mealDate);
+        depositService.sendMeal(tesla, john, valueOf(50));
 
-        assertEquals(valueOf(100), john.getBalance(receptionDate));
-        assertEquals(valueOf(0), john.getBalance(receptionDate.plusYears(1)));
+        assertEquals(valueOf(150), john.getBalance(giftEndDate.minusDays(1)));
+        assertEquals(valueOf(50), john.getBalance(giftEndDate));
+        assertEquals(valueOf(50), john.getBalance(mealEndDate.minusDays(1)));
+        assertEquals(valueOf(0), john.getBalance(mealEndDate));
     }
 
     @Test
     void sendMealDeposit_ko() {
-        final Company apple = new Company(valueOf(0));
-        Employee jessica = new EmployeeImpl();
+        final Company apple = new Company(1234567890L, valueOf(0));
+        final Employee jessica = new EmployeeImpl();
 
         assertThrows(
                 InsufficientBalanceException.class,
                 () -> depositService.sendMeal(apple, jessica, valueOf(50))
         );
+    }
+
+    private void setDateTo(LocalDate receptionDate) {
+        final Instant noon = receptionDate.atStartOfDay(systemDefault()).plusHours(12).toInstant();
+        when(clockSupplier.get()).thenReturn(fixed(noon, systemDefault()));
     }
 
     static class EmployeeImpl extends Employee {

@@ -8,4 +8,6 @@ import java.util.Optional;
 @Repository
 public interface CompanyRepository {
     Optional<Company> findById(Long id);
+
+    void save(Company company);
 }

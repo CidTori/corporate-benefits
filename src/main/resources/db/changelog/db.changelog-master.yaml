@@ -9,6 +9,7 @@ databaseChangeLog:
               - column:
                   name: id
                   type: BIGINT
+                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
@@ -40,6 +41,9 @@ databaseChangeLog:
               - column:
                   name: amount
                   type: DECIMAL
+                  constraints:
+                    nullable: false
+                    checkConstraint: amount > 0
               - column:
                   name: reception_date
                   type: DATE
@@ -53,6 +57,7 @@ databaseChangeLog:
               - column:
                   name: id
                   type: BIGINT
+                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
