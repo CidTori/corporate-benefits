@@ -1,6 +1,5 @@
 package com.example.backend.application.employee;
 
-import com.example.backend.application.company.CompanyApplicationAdapter;
 import com.example.backend.application.company.CompanyNotFoundException;
 import com.example.backend.application.company.CompanyRepository;
 import com.example.backend.domain.DepositService;
@@ -52,12 +51,9 @@ public class EmployeeApplicationService {
             InsufficientCompanyBalanceException
     {
 
-        final CompanyApplicationAdapter company = companyRepository.findById(companyId).orElseThrow(() -> new CompanyNotFoundException("Company with id " + companyId + " not found"));
-        final EmployeeApplicationAdapter employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee with id " + employeeId + " not found"));
+        final Company company = companyRepository.findById(companyId).orElseThrow(() -> new CompanyNotFoundException("Company with id " + companyId + " not found"));
+        final Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee with id " + employeeId + " not found"));
 
         consumer.accept(company, employee, amount);
-
-        //company.save();
-        //employee.save();
     }
 }

@@ -2,7 +2,6 @@ package com.example.backend.infrastructure.deposit;
 
 import com.example.backend.domain.employee.deposit.Deposit;
 import com.example.backend.domain.employee.deposit.DepositType;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;

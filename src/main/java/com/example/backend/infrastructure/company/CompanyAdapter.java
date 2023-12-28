@@ -1,15 +1,13 @@
 package com.example.backend.infrastructure.company;
 
-import com.example.backend.application.company.CompanyApplicationAdapter;
-import lombok.Getter;
+import com.example.backend.domain.company.Company;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 
 @RequiredArgsConstructor(staticName = "of")
-public class CompanyAdapter extends CompanyApplicationAdapter {
+public class CompanyAdapter extends Company {
     private final CompanyEntity entity;
-    private final CompanyEntityRepository companyEntityRepository;
 
     @Override
     public BigDecimal getBalance() {
@@ -19,10 +17,5 @@ public class CompanyAdapter extends CompanyApplicationAdapter {
     @Override
     public void setBalance(BigDecimal balance) {
         entity.setBalance(balance);
-    }
-
-    @Override
-    public void save() {
-        companyEntityRepository.save(entity);
     }
 }

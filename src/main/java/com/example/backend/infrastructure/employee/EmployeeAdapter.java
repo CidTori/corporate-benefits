@@ -1,11 +1,10 @@
 package com.example.backend.infrastructure.employee;
 
-import com.example.backend.application.employee.EmployeeApplicationAdapter;
+import com.example.backend.domain.employee.Employee;
 import com.example.backend.domain.employee.deposit.Deposit;
 import com.example.backend.domain.employee.deposit.DepositType;
 import com.example.backend.infrastructure.deposit.DepositAdapter;
 import com.example.backend.infrastructure.deposit.DepositEntity;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
@@ -13,9 +12,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor(staticName = "of")
-public class EmployeeAdapter extends EmployeeApplicationAdapter {
+public class EmployeeAdapter extends Employee {
     private final EmployeeEntity entity;
-    private final EmployeeEntityRepository employeeEntityRepository;
 
     @Override
     public void addDeposit(DepositType type, BigDecimal amount, LocalDate receptionDate) {
@@ -29,10 +27,5 @@ public class EmployeeAdapter extends EmployeeApplicationAdapter {
                 .map(DepositAdapter::of)
                 .map(Deposit.class::cast)
                 .toList();
-    }
-
-    @Override
-    public void save() {
-        employeeEntityRepository.save(entity);
     }
 }
