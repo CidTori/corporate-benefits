@@ -11,7 +11,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Profile("dev")
 @Configuration

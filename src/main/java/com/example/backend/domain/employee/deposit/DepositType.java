@@ -1,4 +1,4 @@
-package com.example.backend.domain.deposit;
+package com.example.backend.domain.employee.deposit;
 
 import java.time.LocalDate;
 

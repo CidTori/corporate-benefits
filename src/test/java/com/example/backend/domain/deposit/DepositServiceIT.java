@@ -29,6 +29,8 @@ import static com.nimbusds.jose.JWSAlgorithm.HS256;
 import static com.nimbusds.jwt.JWTClaimsSet.Builder;
 import static java.math.BigDecimal.valueOf;
 import static java.time.Clock.fixed;
+import static java.time.LocalDate.now;
+import static java.time.LocalDate.of;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.time.ZoneId.systemDefault;
@@ -55,10 +57,10 @@ class DepositServiceIT {
 
     @Test
     void sendGiftDeposit_ok() {
-        LocalDate giftDate = LocalDate.of(2023, JANUARY, 15);
+        LocalDate giftDate = of(2023, JANUARY, 15);
         LocalDate giftEndDate = giftDate.plusYears(1);
         LocalDate mealDate = giftDate.plusMonths(1);
-        LocalDate mealEndDate = LocalDate.of(mealDate.plusYears(1).getYear(), MARCH, 1);
+        LocalDate mealEndDate = of(mealDate.plusYears(1).getYear(), MARCH, 1);
         String teslaId = "1234567890";
         String johnId = "1";
 
@@ -111,10 +113,11 @@ class DepositServiceIT {
 
     @Test
     void sendMealDeposit_ko() {
-        LocalDate mealDate = LocalDate.of(2023, JANUARY, 15);
+        LocalDate mealDate = of(2023, JANUARY, 15);
         String appleId = "1234567890";
         String jessicaId = "1";
 
+        setDateTo(now());
         ResponseEntity<String> mealResponse = testRestTemplate.postForEntity(
                 "/employees/" + jessicaId + "/meals",
                 new HttpEntity<>(

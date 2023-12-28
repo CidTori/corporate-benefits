@@ -1,6 +1,5 @@
 package com.example.backend.domain.deposit;
 
-import com.example.backend.domain.company.Company;
 import com.example.backend.infrastructure.company.CompanyEntity;
 import com.example.backend.infrastructure.employee.EmployeeEntityRepository;
 import com.nimbusds.jose.JOSEException;
@@ -21,12 +20,10 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -35,14 +32,11 @@ import static com.nimbusds.jwt.JWTClaimsSet.Builder;
 import static java.math.BigDecimal.valueOf;
 import static java.time.Clock.fixed;
 import static java.time.Month.JANUARY;
-import static java.time.Month.MARCH;
 import static java.time.ZoneId.systemDefault;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)

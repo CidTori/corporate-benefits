@@ -1,22 +1,25 @@
 package com.example.backend.infrastructure.employee;
 
-import com.example.backend.domain.deposit.Deposit;
-import com.example.backend.domain.employee.Employee;
+import com.example.backend.application.employee.EmployeeApplicationAdapter;
+import com.example.backend.domain.employee.deposit.Deposit;
+import com.example.backend.domain.employee.deposit.DepositType;
 import com.example.backend.infrastructure.deposit.DepositAdapter;
 import com.example.backend.infrastructure.deposit.DepositEntity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor(staticName = "of")
-public class EmployeeAdapter extends Employee {
-    @Getter private final EmployeeEntity entity;
+public class EmployeeAdapter extends EmployeeApplicationAdapter {
+    private final EmployeeEntity entity;
+    private final EmployeeEntityRepository employeeEntityRepository;
 
     @Override
-    public void addDeposit(Deposit deposit) {
-        DepositEntity depositEntity = ((DepositAdapter) deposit).getEntity();
-        depositEntity.setEmployee(entity);
+    public void addDeposit(DepositType type, BigDecimal amount, LocalDate receptionDate) {
+        DepositEntity depositEntity = new DepositEntity(null, entity, type, amount, receptionDate);
         entity.getDeposits().add(depositEntity);
     }
 
@@ -26,5 +29,10 @@ public class EmployeeAdapter extends Employee {
                 .map(DepositAdapter::of)
                 .map(Deposit.class::cast)
                 .toList();
+    }
+
+    @Override
+    public void save() {
+        employeeEntityRepository.save(entity);
     }
 }

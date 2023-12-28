@@ -1,19 +1,16 @@
 package com.example.backend.infrastructure.deposit;
 
-import com.example.backend.domain.deposit.Deposit;
-import com.example.backend.domain.deposit.DepositType;
-import com.example.backend.domain.employee.Employee;
-import com.example.backend.infrastructure.employee.EmployeeEntity;
+import com.example.backend.domain.employee.deposit.Deposit;
+import com.example.backend.domain.employee.deposit.DepositType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 @RequiredArgsConstructor(staticName = "of")
 public class DepositAdapter extends Deposit {
-    @Getter private final DepositEntity entity;
+    private final DepositEntity entity;
 
     @Override
     protected DepositType getType() {

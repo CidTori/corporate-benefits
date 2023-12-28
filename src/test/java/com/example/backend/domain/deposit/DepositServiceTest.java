@@ -1,13 +1,16 @@
 package com.example.backend.domain.deposit;
 
-import com.example.backend.application.DepositFactory;
+import com.example.backend.domain.DepositService;
 import com.example.backend.domain.company.Company;
 import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.employee.Employee;
-import lombok.*;
+import com.example.backend.domain.employee.deposit.Deposit;
+import com.example.backend.domain.employee.deposit.DepositType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,7 +30,6 @@ import static java.time.Month.MARCH;
 import static java.time.ZoneId.systemDefault;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Answers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,9 +37,6 @@ class DepositServiceTest {
 
     @Mock
     Supplier<Clock> clockSupplier;
-
-    @Mock(answer = CALLS_REAL_METHODS)
-    DepositFactoryImpl depositFactory;
 
     @InjectMocks
     DepositService depositService;
@@ -93,8 +92,8 @@ class DepositServiceTest {
         List<Deposit> deposits = new ArrayList<>();
 
         @Override
-        public void addDeposit(Deposit deposit) {
-            deposits.add(deposit);
+        public void addDeposit(DepositType type, BigDecimal amount, LocalDate receptionDate) {
+            deposits.add(new DepositImpl(type, amount, receptionDate));
         }
     }
 
@@ -102,12 +101,5 @@ class DepositServiceTest {
     @Getter @Setter
     static class CompanyImpl extends Company {
         private BigDecimal balance;
-    }
-
-    private class DepositFactoryImpl implements DepositFactory {
-        @Override
-        public Deposit create(DepositType type, BigDecimal amount, LocalDate receptionDate) {
-            return new DepositImpl(type, amount, receptionDate);
-        }
     }
 }

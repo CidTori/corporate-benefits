@@ -1,6 +1,4 @@
-package com.example.backend.domain.deposit;
-
-import lombok.Value;
+package com.example.backend.domain.employee.deposit;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

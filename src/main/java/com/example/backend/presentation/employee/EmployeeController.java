@@ -1,7 +1,7 @@
-package com.example.backend.presentation;
+package com.example.backend.presentation.employee;
 
 import com.example.backend.application.company.CompanyNotFoundException;
-import com.example.backend.application.DepositApplicationService;
+import com.example.backend.application.employee.EmployeeApplicationService;
 import com.example.backend.application.employee.EmployeeNotFoundException;
 import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.utils.TriThrowingTriConsumer;
@@ -21,7 +21,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequiredArgsConstructor
 @PreAuthorize("isAuthenticated()")
 public class EmployeeController {
-    private final DepositApplicationService depositService;
+    private final EmployeeApplicationService depositService;
 
     @GetMapping("/employees/{employeeId}/balance")
     @PreAuthorize("permitAll()")

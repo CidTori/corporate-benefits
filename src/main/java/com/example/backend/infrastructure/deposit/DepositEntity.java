@@ -1,6 +1,6 @@
 package com.example.backend.infrastructure.deposit;
 
-import com.example.backend.domain.deposit.DepositType;
+import com.example.backend.domain.employee.deposit.DepositType;
 import com.example.backend.infrastructure.employee.EmployeeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
