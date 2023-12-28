@@ -1,7 +1,6 @@
 package com.example.backend.domain.deposit;
 
 import com.example.backend.infrastructure.company.CompanyEntity;
-import com.example.backend.infrastructure.employee.EmployeeEntityRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -18,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Clock;
@@ -34,11 +34,12 @@ import static java.time.Clock.fixed;
 import static java.time.Month.JANUARY;
 import static java.time.ZoneId.systemDefault;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
+@DirtiesContext
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -53,16 +54,13 @@ class TransactionIT {
     @MockBean
     Supplier<Clock> clockSupplier;
 
-    @MockBean
-    EmployeeEntityRepository employeeEntityRepository;
-
     @Test
     void rollback() {
         LocalDate giftDate = LocalDate.of(2023, JANUARY, 15);
         String teslaId = "1234567890";
         String johnId = "1";
 
-        when(employeeEntityRepository.save(any())).thenThrow(IllegalArgumentException.class);
+        jdbcTemplate.execute("ALTER TABLE deposit ADD CONSTRAINT always_fail CHECK (1 = 0);");
 
         setDateTo(giftDate);
         ResponseEntity<String> giftResponse = testRestTemplate.postForEntity(
@@ -75,6 +73,8 @@ class TransactionIT {
         );
 
         CompanyEntity company = jdbcTemplate.query("SELECT * FROM company WHERE id = " + teslaId, new BeanPropertyRowMapper<>(CompanyEntity.class)).getFirst();
+
+        assertEquals(INTERNAL_SERVER_ERROR, giftResponse.getStatusCode());
         assertEquals(valueOf(1000), company.getBalance());
     }
 

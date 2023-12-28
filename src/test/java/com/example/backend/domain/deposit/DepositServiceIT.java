@@ -15,6 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
@@ -29,7 +30,6 @@ import static com.nimbusds.jose.JWSAlgorithm.HS256;
 import static com.nimbusds.jwt.JWTClaimsSet.Builder;
 import static java.math.BigDecimal.valueOf;
 import static java.time.Clock.fixed;
-import static java.time.LocalDate.now;
 import static java.time.LocalDate.of;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
@@ -41,6 +41,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
+@DirtiesContext
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -117,7 +118,6 @@ class DepositServiceIT {
         String appleId = "1234567890";
         String jessicaId = "1";
 
-        setDateTo(now());
         ResponseEntity<String> mealResponse = testRestTemplate.postForEntity(
                 "/employees/" + jessicaId + "/meals",
                 new HttpEntity<>(
