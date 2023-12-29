@@ -1,10 +1,16 @@
 package com.example.backend.presentation.employee;
 
-import com.example.backend.application.company.CompanyNotFoundException;
-import com.example.backend.application.employee.EmployeeApplicationService;
-import com.example.backend.application.employee.EmployeeNotFoundException;
-import com.example.backend.domain.company.InsufficientCompanyBalanceException;
-import com.example.backend.utils.TriThrowingTriConsumer;
+import com.example.backend.deposit.application.DepositApplicationService;
+import com.example.backend.deposit.application.company.CompanyNotFoundException;
+import com.example.backend.deposit.application.employee.DepositEmployeeNotFoundException;
+import com.example.backend.deposit.domain.Deposit;
+import com.example.backend.deposit.domain.company.InsufficientCompanyBalanceException;
+import com.example.backend.employee.application.EmployeeApplicationService;
+import com.example.backend.employee.application.EmployeeNotFoundException;
+import com.example.backend.presentation.employee.deposit.DepositRequest;
+import com.example.backend.presentation.employee.deposit.DepositResource;
+import com.example.backend.presentation.employee.deposit.DepositResourceMapper;
+import com.example.backend.utils.TriThrowingTriFunction;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +27,9 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequiredArgsConstructor
 @PreAuthorize("isAuthenticated()")
 public class EmployeeController {
-    private final EmployeeApplicationService depositService;
+    private final DepositApplicationService depositService;
+    private final EmployeeApplicationService employeeApplicationService;
+    private final DepositResourceMapper depositResourceMapper;
 
     @GetMapping("/employees/{employeeId}/balance")
     @PreAuthorize("permitAll()")
@@ -29,47 +37,49 @@ public class EmployeeController {
     @SecurityRequirements
     public EmployeeBalanceResource getBalance(@PathVariable Long employeeId) {
         try {
-            return new EmployeeBalanceResource(depositService.getBalance(employeeId));
+            return new EmployeeBalanceResource(employeeApplicationService.getBalance(employeeId));
         } catch (EmployeeNotFoundException ex) {
             throw new ResponseStatusException(BAD_REQUEST, "Employee not found", ex);
         }
     }
 
     @PostMapping("/employees/{employeeId}/gifts")
-    public void addGift(
+    public DepositResource addGift(
             Authentication authentication,
             @PathVariable Long employeeId,
             @RequestBody DepositRequest deposit
     ) {
-        addDeposit(depositService::sendGift, authentication, employeeId, deposit);
+        return addDeposit(depositService::sendGift, authentication, employeeId, deposit);
     }
 
     @PostMapping("/employees/{employeeId}/meals")
-    public void addMeal(
+    public DepositResource addMeal(
             Authentication authentication,
             @PathVariable Long employeeId,
             @RequestBody DepositRequest deposit
     ) {
-        addDeposit(depositService::sendMeal, authentication, employeeId, deposit);
+        return addDeposit(depositService::sendMeal, authentication, employeeId, deposit);
     }
 
-    private void addDeposit(
-            TriThrowingTriConsumer<
-                    InsufficientCompanyBalanceException, CompanyNotFoundException, EmployeeNotFoundException,
+    private DepositResource addDeposit(
+            TriThrowingTriFunction<
+                    InsufficientCompanyBalanceException, CompanyNotFoundException, DepositEmployeeNotFoundException,
+                    Deposit,
                     Long, Long, BigDecimal
             > consumer,
             Authentication authentication,
             Long employeeId,
-            DepositRequest deposit
+            DepositRequest request
     ) {
         try {
             Long companyId = Long.valueOf(authentication.getName());
-            consumer.accept(companyId, employeeId, deposit.amount());
+            Deposit deposit = consumer.apply(companyId, employeeId, request.amount());
+            return depositResourceMapper.toResource(deposit);
         } catch (InsufficientCompanyBalanceException ex) {
             throw new ResponseStatusException(BAD_REQUEST, "Company balance insufficient", ex);
         } catch (CompanyNotFoundException ex) {
             throw new ResponseStatusException(NOT_FOUND, "Company not found", ex);
-        } catch (EmployeeNotFoundException ex) {
+        } catch (DepositEmployeeNotFoundException ex) {
             throw new ResponseStatusException(NOT_FOUND, "Employee not found", ex);
         }
     }

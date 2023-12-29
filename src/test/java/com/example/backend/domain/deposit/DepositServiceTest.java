@@ -1,32 +1,26 @@
 package com.example.backend.domain.deposit;
 
-import com.example.backend.domain.DepositService;
-import com.example.backend.domain.company.Company;
-import com.example.backend.domain.company.InsufficientCompanyBalanceException;
-import com.example.backend.domain.employee.Employee;
-import com.example.backend.domain.employee.deposit.Deposit;
-import com.example.backend.domain.employee.deposit.DepositType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import com.example.backend.deposit.domain.Deposit;
+import com.example.backend.deposit.domain.DepositService;
+import com.example.backend.deposit.domain.company.Company;
+import com.example.backend.deposit.domain.company.InsufficientCompanyBalanceException;
+import com.example.backend.employee.domain.Employee;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
+import static com.example.backend.deposit.domain.DepositType.GIFT;
+import static com.example.backend.deposit.domain.DepositType.MEAL;
 import static java.math.BigDecimal.valueOf;
 import static java.time.Clock.fixed;
 import static java.time.Month.JANUARY;
-import static java.time.Month.MARCH;
 import static java.time.ZoneId.systemDefault;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,62 +38,36 @@ class DepositServiceTest {
     @Test
     void sendGiftDeposit_ok() throws InsufficientCompanyBalanceException {
         final LocalDate giftDate = LocalDate.of(2023, JANUARY, 15);
-        final LocalDate giftEndDate = giftDate.plusYears(1);
         final LocalDate mealDate = giftDate.plusMonths(1);
-        final LocalDate mealEndDate = LocalDate.of(mealDate.plusYears(1).getYear(), MARCH, 1);
-        final Company tesla = new CompanyImpl(valueOf(1000));
-        final Employee john = new EmployeeImpl();
+        final Company tesla = new Company(1234567890L, valueOf(1000));
+        final Employee john = new Employee(1L);
 
         setDateTo(giftDate);
-        depositService.sendGift(tesla, john, valueOf(100));
+        Deposit gift = depositService.sendGift(tesla, john.getId(), valueOf(100));
         setDateTo(mealDate);
-        depositService.sendMeal(tesla, john, valueOf(50));
+        Deposit meal = depositService.sendMeal(tesla, john.getId(), valueOf(50));
 
         assertEquals(valueOf(850), tesla.getBalance());
 
-        assertEquals(valueOf(150), john.getBalance(giftEndDate.minusDays(1)));
-        assertEquals(valueOf(50), john.getBalance(giftEndDate));
-        assertEquals(valueOf(50), john.getBalance(mealEndDate.minusDays(1)));
-        assertEquals(valueOf(0), john.getBalance(mealEndDate));
+        assertEquals(giftDate, gift.getReceptionDate());
+        assertEquals(GIFT, gift.getType());
+        assertEquals(mealDate, meal.getReceptionDate());
+        assertEquals(MEAL, meal.getType());
     }
 
     @Test
     void sendMealDeposit_ko() {
-        final Company apple = new CompanyImpl(valueOf(0));
-        final Employee jessica = new EmployeeImpl();
+        final Company apple = new Company(1234567890L, valueOf(0));
+        final Employee jessica = new Employee(1L);
 
         assertThrows(
                 InsufficientCompanyBalanceException.class,
-                () -> depositService.sendMeal(apple, jessica, valueOf(50))
+                () -> depositService.sendMeal(apple, jessica.getId(), valueOf(50))
         );
     }
 
     private void setDateTo(LocalDate receptionDate) {
         final Instant noon = receptionDate.atStartOfDay(systemDefault()).plusHours(12).toInstant();
         when(clockSupplier.get()).thenReturn(fixed(noon, systemDefault()));
-    }
-
-    @AllArgsConstructor
-    @Getter @Setter
-    static class DepositImpl extends Deposit {
-        private DepositType type;
-        private BigDecimal amount;
-        private LocalDate receptionDate;
-    }
-
-    @Getter @Setter
-    static class EmployeeImpl extends Employee {
-        List<Deposit> deposits = new ArrayList<>();
-
-        @Override
-        public void addDeposit(DepositType type, BigDecimal amount, LocalDate receptionDate) {
-            deposits.add(new DepositImpl(type, amount, receptionDate));
-        }
-    }
-
-    @AllArgsConstructor
-    @Getter @Setter
-    static class CompanyImpl extends Company {
-        private BigDecimal balance;
     }
 }
