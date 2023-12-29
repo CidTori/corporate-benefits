@@ -18,8 +18,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfiguration {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        //http.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated());
-        http.oauth2ResourceServer((resourceServer) -> resourceServer.jwt(withDefaults()));
+        //http.authorizeHttpRequests(requests -> requests.anyRequest().authenticated());
+        http.oauth2ResourceServer(resourceServer -> resourceServer.jwt(withDefaults()));
 
         return http.build();
     }
