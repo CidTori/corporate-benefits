@@ -11,10 +11,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  valueNumeric: 1234567890
+                  valueNumeric: "1234567890"
               - column:
                   name: balance
-                  valueNumeric: 1000
+                  valueNumeric: "1000"
   - changeSet:
       id: 2
       author: demo-dev
@@ -24,4 +24,4 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  valueNumeric: 1
+                  valueNumeric: default
