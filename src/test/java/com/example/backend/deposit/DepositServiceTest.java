@@ -1,4 +1,4 @@
-package com.example.backend.domain.deposit;
+package com.example.backend.deposit;
 
 import com.example.backend.deposit.domain.Deposit;
 import com.example.backend.deposit.domain.DepositService;
@@ -49,10 +49,10 @@ class DepositServiceTest {
 
         assertEquals(valueOf(850), tesla.getBalance());
 
-        assertEquals(giftDate, gift.getReceptionDate());
-        assertEquals(GIFT, gift.getType());
-        assertEquals(mealDate, meal.getReceptionDate());
-        assertEquals(MEAL, meal.getType());
+        assertEquals(giftDate, gift.receptionDate());
+        assertEquals(GIFT, gift.type());
+        assertEquals(mealDate, meal.receptionDate());
+        assertEquals(MEAL, meal.type());
     }
 
     @Test

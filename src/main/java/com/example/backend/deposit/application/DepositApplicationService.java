@@ -24,17 +24,24 @@ public class DepositApplicationService {
     private final DepositRepository depositRepository;
 
     @Transactional
-    public Deposit sendGift(Long companyId, Long employeeId, BigDecimal amount) throws InsufficientCompanyBalanceException, CompanyNotFoundException, DepositEmployeeNotFoundException {
+    public Deposit sendGift(Long companyId, Long employeeId, BigDecimal amount)
+            throws InsufficientCompanyBalanceException, CompanyNotFoundException, DepositEmployeeNotFoundException {
         return sendDeposit(depositService::sendGift, companyId, employeeId, amount);
     }
 
     @Transactional
-    public Deposit sendMeal(Long companyId, Long employeeId, BigDecimal amount) throws InsufficientCompanyBalanceException, CompanyNotFoundException, DepositEmployeeNotFoundException {
+    public Deposit sendMeal(Long companyId, Long employeeId, BigDecimal amount)
+            throws InsufficientCompanyBalanceException, CompanyNotFoundException, DepositEmployeeNotFoundException {
         return sendDeposit(depositService::sendMeal, companyId, employeeId, amount);
     }
 
     private Deposit sendDeposit(
-            ThrowingTriFunction<InsufficientCompanyBalanceException, Deposit, Company, Long, BigDecimal> consumer, Long companyId,
+            ThrowingTriFunction<
+                    InsufficientCompanyBalanceException,
+                    Deposit,
+                    Company, Long, BigDecimal
+            > sendingDeposit,
+            Long companyId,
             Long employeeId,
             BigDecimal amount
     ) throws
@@ -45,7 +52,7 @@ public class DepositApplicationService {
         final Company company = companyRepository.findById(companyId).orElseThrow(() -> new CompanyNotFoundException("Company with id " + companyId + " not found"));
         if(!depositEmployeeRepository.existsById(employeeId)) throw new DepositEmployeeNotFoundException("Employee with id " + employeeId + " not found");
 
-        Deposit deposit = consumer.apply(company, employeeId, amount);
+        Deposit deposit = sendingDeposit.apply(company, employeeId, amount);
 
         companyRepository.save(company);
         depositRepository.save(deposit);

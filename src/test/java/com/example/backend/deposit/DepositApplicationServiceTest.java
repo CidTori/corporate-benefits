@@ -1,4 +1,4 @@
-package com.example.backend.domain.deposit;
+package com.example.backend.deposit;
 
 import com.example.backend.deposit.application.DepositApplicationService;
 import com.example.backend.deposit.application.DepositRepository;

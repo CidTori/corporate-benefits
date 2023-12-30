@@ -1,29 +1,31 @@
-package com.example.backend.employee.infrastructure;
+package com.example.backend.employee.infrastructure.deposit;
 
-import com.example.backend.employee.infrastructure.deposit.EmployeeDepositEntity;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import com.example.backend.employee.domain.deposit.EmployeeDepositType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name = "employee")
+@Table(name = "deposit")
 @Getter @Setter
 @ToString
-@RequiredArgsConstructor
-public class EmployeeEntity {
-    @Id @GeneratedValue(strategy = IDENTITY)
-    private Long id;
-    @OneToMany(mappedBy = "employeeId")
-    @ToString.Exclude
-    private List<EmployeeDepositEntity> deposits;
+@NoArgsConstructor
+@AllArgsConstructor
+public class EmployeeDepositEntity {
+    @Id @GeneratedValue(strategy = IDENTITY) private Long id;
+    private Long employeeId;
+    private EmployeeDepositType type;
+    private BigDecimal amount;
+    private LocalDate receptionDate;
 
     @Override
     public final boolean equals(Object o) {
@@ -32,7 +34,7 @@ public class EmployeeEntity {
         Class<?> oEffectiveClass = o instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        EmployeeEntity that = (EmployeeEntity) o;
+        EmployeeDepositEntity that = (EmployeeDepositEntity) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 
