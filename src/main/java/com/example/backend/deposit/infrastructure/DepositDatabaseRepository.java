@@ -12,7 +12,7 @@ public class DepositDatabaseRepository implements DepositRepository {
     private final DepositEntityMapper depositEntityMapper;
 
     @Override
-    public void save(Deposit deposit) {
-        depositEntityRepository.save(depositEntityMapper.toEntity(deposit));
+    public Deposit save(Deposit deposit) {
+        return depositEntityMapper.toDomain(depositEntityRepository.save(depositEntityMapper.toEntity(deposit)));
     }
 }

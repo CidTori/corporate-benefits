@@ -55,8 +55,6 @@ public class DepositApplicationService {
         Deposit deposit = sendingDeposit.apply(company, employeeId, amount);
 
         companyRepository.save(company);
-        depositRepository.save(deposit);
-
-        return deposit;
+        return depositRepository.save(deposit);
     }
 }

@@ -12,13 +12,12 @@ import static java.math.BigDecimal.ZERO;
 
 @Value
 public class Employee {
-    Long id;
     List<EmployeeDeposit> deposits = new ArrayList<>();
 
     public BigDecimal getBalance(LocalDate date) {
         return deposits.stream()
                 .filter(d -> d.isNotExpired(date))
-                .map(EmployeeDeposit::getAmount)
+                .map(EmployeeDeposit::amount)
                 .reduce(ZERO, BigDecimal::add);
     }
 }

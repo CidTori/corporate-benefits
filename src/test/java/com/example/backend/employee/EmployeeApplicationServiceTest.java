@@ -52,7 +52,7 @@ class EmployeeApplicationServiceTest {
         LocalDate mealDate = giftDate.plusMonths(1);
         LocalDate mealEndDate = LocalDate.of(mealDate.plusYears(1).getYear(), MARCH, 1);
         Long johnId = 1L;
-        Employee john = new Employee(johnId);
+        Employee john = new Employee();
         List<EmployeeDeposit> deposits = List.of(
                 new EmployeeDeposit(GIFT, valueOf(100), giftDate, johnId),
                 new EmployeeDeposit(MEAL, valueOf(50), giftDate, johnId)

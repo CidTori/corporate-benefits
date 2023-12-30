@@ -23,13 +23,15 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import static com.example.backend.deposit.domain.DepositType.GIFT;
+import static com.example.backend.deposit.domain.DepositType.MEAL;
 import static java.math.BigDecimal.valueOf;
 import static java.time.Clock.fixed;
 import static java.time.Month.JANUARY;
 import static java.time.ZoneId.systemDefault;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -69,6 +71,7 @@ class DepositApplicationServiceTest {
         Company tesla = new Company(teslaId, valueOf(1000));
         when(companyRepository.findById(teslaId)).thenReturn(Optional.of(tesla));
         when(depositEmployeeRepository.existsById(johnId)).thenReturn(true);
+        when(depositRepository.save(any())).thenAnswer(invocation -> invocation.getArguments()[0]);
 
         setDateTo(giftDate);
         Deposit gift = depositApplicationService.sendGift(teslaId, johnId, valueOf(100));
@@ -77,8 +80,10 @@ class DepositApplicationServiceTest {
 
         assertEquals(valueOf(850), tesla.getBalance());
 
-        verify(depositRepository).save(gift);
-        verify(depositRepository).save(meal);
+        assertEquals(giftDate, gift.receptionDate());
+        assertEquals(GIFT, gift.type());
+        assertEquals(mealDate, meal.receptionDate());
+        assertEquals(MEAL, meal.type());
     }
 
     @Test
