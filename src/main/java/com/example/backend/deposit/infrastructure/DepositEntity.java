@@ -1,10 +1,6 @@
 package com.example.backend.deposit.infrastructure;
 
-import com.example.backend.deposit.domain.DepositType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -23,7 +19,8 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 public class DepositEntity {
     @Id @GeneratedValue(strategy = IDENTITY) private Long id;
     private Long employeeId;
-    private DepositType type;
+    @ManyToOne @JoinColumn(name = "type")
+    private DepositTypeEntity type;
     private BigDecimal amount;
     private LocalDate receptionDate;
 

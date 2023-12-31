@@ -1,28 +1,22 @@
-package com.example.backend.employee.infrastructure.deposit;
+package com.example.backend.deposit.infrastructure;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Objects;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
-
 @Entity
-@Table(name = "deposit")
+@Table(name = "deposit_type")
 @Getter @Setter
 @ToString
-@NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
-public class EmployeeDepositEntity {
-    @Id @GeneratedValue(strategy = IDENTITY) private Long id;
-    private Long employeeId;
-    @ManyToOne @JoinColumn(name = "type")
-    private EmployeeDepositTypeEntity type;
-    private BigDecimal amount;
-    private LocalDate receptionDate;
+public class DepositTypeEntity {
+    @Id
+    private String name;
 
     @Override
     public final boolean equals(Object o) {
@@ -31,8 +25,8 @@ public class EmployeeDepositEntity {
         Class<?> oEffectiveClass = o instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        EmployeeDepositEntity that = (EmployeeDepositEntity) o;
-        return getId() != null && Objects.equals(getId(), that.getId());
+        DepositTypeEntity that = (DepositTypeEntity) o;
+        return getName() != null && Objects.equals(getName(), that.getName());
     }
 
     @Override
