@@ -1,14 +1,15 @@
 package com.example.backend.presentation.employee.deposit;
 
-import com.example.backend.deposit.domain.DepositType;
+import lombok.Value;
+import lombok.experimental.NonFinal;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Value @NonFinal
 //@RequiredArgsConstructor(onConstructor_ = {@JsonCreator})
-public record DepositResource(
-        DepositType type,
-        BigDecimal amount,
-        LocalDate receptionDate,
-        Long employeeId
-) {}
+public abstract class DepositResource {
+    BigDecimal amount;
+    LocalDate receptionDate;
+    Long employeeId;
+}

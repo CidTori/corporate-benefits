@@ -1,7 +1,9 @@
 package com.example.backend.deposit.application;
 
-import com.example.backend.deposit.domain.Deposit;
+import com.example.backend.deposit.domain.Gift;
+import com.example.backend.deposit.domain.Meal;
 
 public interface DepositRepository {
-    Deposit save(Deposit deposit);
+    Gift save(Gift deposit);
+    Meal save(Meal deposit);
 }

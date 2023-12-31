@@ -17,7 +17,7 @@ public class Employee {
     public BigDecimal getBalance(LocalDate date) {
         return deposits.stream()
                 .filter(d -> d.isNotExpired(date))
-                .map(EmployeeDeposit::amount)
+                .map(EmployeeDeposit::getAmount)
                 .reduce(ZERO, BigDecimal::add);
     }
 }

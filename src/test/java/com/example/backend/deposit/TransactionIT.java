@@ -1,7 +1,7 @@
 package com.example.backend.deposit;
 
 import com.example.backend.deposit.infrastructure.company.CompanyEntity;
-import com.example.backend.presentation.employee.deposit.DepositResource;
+import com.example.backend.presentation.employee.deposit.GiftResource;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -64,13 +64,13 @@ class TransactionIT {
         jdbcTemplate.execute("ALTER TABLE deposit ADD CONSTRAINT always_fail CHECK (1 = 0);");
 
         setDateTo(giftDate);
-        ResponseEntity<DepositResource> giftResponse = testRestTemplate.postForEntity(
+        ResponseEntity<GiftResource> giftResponse = testRestTemplate.postForEntity(
                 "/employees/" + johnId + "/gifts",
                 new HttpEntity<>(
                         Map.of("amount", valueOf(100)),
                         getDepositHeaders(createJWT(teslaId, giftDate))
                 ),
-                DepositResource.class
+                GiftResource.class
         );
 
         CompanyEntity company = jdbcTemplate.query("SELECT * FROM company WHERE id = " + teslaId, new BeanPropertyRowMapper<>(CompanyEntity.class)).getFirst();

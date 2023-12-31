@@ -8,6 +8,8 @@ import com.example.backend.deposit.application.employee.DepositEmployeeNotFoundE
 import com.example.backend.deposit.application.employee.DepositEmployeeRepository;
 import com.example.backend.deposit.domain.Deposit;
 import com.example.backend.deposit.domain.DepositService;
+import com.example.backend.deposit.domain.Gift;
+import com.example.backend.deposit.domain.Meal;
 import com.example.backend.deposit.domain.company.Company;
 import com.example.backend.deposit.domain.company.InsufficientCompanyBalanceException;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,14 +25,11 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import static com.example.backend.deposit.domain.DepositType.GIFT;
-import static com.example.backend.deposit.domain.DepositType.MEAL;
 import static java.math.BigDecimal.valueOf;
 import static java.time.Clock.fixed;
 import static java.time.Month.JANUARY;
 import static java.time.ZoneId.systemDefault;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -71,7 +70,8 @@ class DepositApplicationServiceTest {
         Company tesla = new Company(teslaId, valueOf(1000));
         when(companyRepository.findById(teslaId)).thenReturn(Optional.of(tesla));
         when(depositEmployeeRepository.existsById(johnId)).thenReturn(true);
-        when(depositRepository.save(any())).thenAnswer(invocation -> invocation.getArguments()[0]);
+        when(depositRepository.save(any(Gift.class))).thenAnswer(invocation -> invocation.getArguments()[0]);
+        when(depositRepository.save(any(Meal.class))).thenAnswer(invocation -> invocation.getArguments()[0]);
 
         setDateTo(giftDate);
         Deposit gift = depositApplicationService.sendGift(teslaId, johnId, valueOf(100));
@@ -80,10 +80,10 @@ class DepositApplicationServiceTest {
 
         assertEquals(valueOf(850), tesla.getBalance());
 
-        assertEquals(giftDate, gift.receptionDate());
-        assertEquals(GIFT, gift.type());
-        assertEquals(mealDate, meal.receptionDate());
-        assertEquals(MEAL, meal.type());
+        assertEquals(giftDate, gift.getReceptionDate());
+        assertInstanceOf(Gift.class, gift);
+        assertEquals(mealDate, meal.getReceptionDate());
+        assertInstanceOf(Meal.class, meal);
     }
 
     @Test

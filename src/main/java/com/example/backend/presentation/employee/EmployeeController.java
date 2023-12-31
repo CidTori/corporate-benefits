@@ -7,9 +7,7 @@ import com.example.backend.deposit.domain.Deposit;
 import com.example.backend.deposit.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.employee.application.EmployeeApplicationService;
 import com.example.backend.employee.application.EmployeeNotFoundException;
-import com.example.backend.presentation.employee.deposit.DepositRequest;
-import com.example.backend.presentation.employee.deposit.DepositResource;
-import com.example.backend.presentation.employee.deposit.DepositResourceMapper;
+import com.example.backend.presentation.employee.deposit.*;
 import com.example.backend.utils.TriThrowingTriFunction;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.util.function.Function;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -44,37 +43,38 @@ public class EmployeeController {
     }
 
     @PostMapping("/employees/{employeeId}/gifts")
-    public DepositResource addGift(
+    public GiftResource addGift(
             Authentication authentication,
             @PathVariable Long employeeId,
             @RequestBody DepositRequest deposit
     ) {
-        return addDeposit(depositService::sendGift, authentication, employeeId, deposit);
+        return addDeposit(depositService::sendGift, authentication, employeeId, deposit, depositResourceMapper::toGiftResource);
     }
 
     @PostMapping("/employees/{employeeId}/meals")
-    public DepositResource addMeal(
+    public MealResource addMeal(
             Authentication authentication,
             @PathVariable Long employeeId,
             @RequestBody DepositRequest deposit
     ) {
-        return addDeposit(depositService::sendMeal, authentication, employeeId, deposit);
+        return addDeposit(depositService::sendMeal, authentication, employeeId, deposit, depositResourceMapper::toMealResource);
     }
 
-    private DepositResource addDeposit(
+    private <T extends DepositResource, U extends Deposit> T addDeposit(
             TriThrowingTriFunction<
                     InsufficientCompanyBalanceException, CompanyNotFoundException, DepositEmployeeNotFoundException,
-                    Deposit,
+                    U,
                     Long, Long, BigDecimal
-            > consumer,
+            > addingDeposit,
             Authentication authentication,
             Long employeeId,
-            DepositRequest request
+            DepositRequest request,
+            Function<U, T> mapping
     ) {
         try {
             Long companyId = Long.valueOf(authentication.getName());
-            Deposit deposit = consumer.apply(companyId, employeeId, request.amount());
-            return depositResourceMapper.toResource(deposit);
+            U deposit = addingDeposit.apply(companyId, employeeId, request.amount());
+            return mapping.apply(deposit);
         } catch (InsufficientCompanyBalanceException ex) {
             throw new ResponseStatusException(BAD_REQUEST, "Company balance insufficient", ex);
         } catch (CompanyNotFoundException ex) {

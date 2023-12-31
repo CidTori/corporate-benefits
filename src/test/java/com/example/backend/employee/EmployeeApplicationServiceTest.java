@@ -5,6 +5,8 @@ import com.example.backend.employee.application.EmployeeNotFoundException;
 import com.example.backend.employee.application.EmployeeRepository;
 import com.example.backend.employee.domain.Employee;
 import com.example.backend.employee.domain.deposit.EmployeeDeposit;
+import com.example.backend.employee.domain.deposit.EmployeeGift;
+import com.example.backend.employee.domain.deposit.EmployeeMeal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,8 +20,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import static com.example.backend.employee.domain.deposit.EmployeeDepositType.GIFT;
-import static com.example.backend.employee.domain.deposit.EmployeeDepositType.MEAL;
 import static java.math.BigDecimal.valueOf;
 import static java.time.Clock.fixed;
 import static java.time.Month.JANUARY;
@@ -54,8 +54,8 @@ class EmployeeApplicationServiceTest {
         Long johnId = 1L;
         Employee john = new Employee();
         List<EmployeeDeposit> deposits = List.of(
-                new EmployeeDeposit(GIFT, valueOf(100), giftDate, johnId),
-                new EmployeeDeposit(MEAL, valueOf(50), giftDate, johnId)
+                new EmployeeGift(valueOf(100), giftDate, johnId),
+                new EmployeeMeal(valueOf(50), giftDate, johnId)
         );
         john.getDeposits().addAll(deposits);
         when(employeeRepository.findById(johnId)).thenReturn(Optional.of(john));

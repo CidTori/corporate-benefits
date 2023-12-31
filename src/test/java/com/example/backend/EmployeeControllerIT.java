@@ -1,6 +1,7 @@
 package com.example.backend;
 
-import com.example.backend.presentation.employee.deposit.DepositResource;
+import com.example.backend.presentation.employee.deposit.GiftResource;
+import com.example.backend.presentation.employee.deposit.MealResource;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -67,23 +68,23 @@ class EmployeeControllerIT {
         String johnId = "1";
 
         setDateTo(giftDate);
-        ResponseEntity<DepositResource> giftResponse = testRestTemplate.postForEntity(
+        ResponseEntity<GiftResource> giftResponse = testRestTemplate.postForEntity(
                 "/employees/" + johnId + "/gifts",
                 new HttpEntity<>(
                         Map.of("amount", valueOf(100)),
                         getDepositHeaders(createJWT(teslaId, giftDate))
                 ),
-                DepositResource.class
+                GiftResource.class
         );
         BigDecimal balanceAfterGift = jdbcTemplate.queryForObject("SELECT balance FROM company WHERE id = ?", BigDecimal.class, teslaId);
         setDateTo(mealDate);
-        ResponseEntity<DepositResource> mealResponse = testRestTemplate.postForEntity(
+        ResponseEntity<MealResource> mealResponse = testRestTemplate.postForEntity(
                 "/employees/" + johnId + "/meals",
                 new HttpEntity<>(
                         Map.of("amount", valueOf(50)),
                         getDepositHeaders(createJWT(teslaId, giftDate))
                 ),
-                DepositResource.class
+                MealResource.class
         );
         BigDecimal balanceAfterMeal = jdbcTemplate.queryForObject("SELECT balance FROM company WHERE id = ?", BigDecimal.class, teslaId);
 
@@ -119,13 +120,13 @@ class EmployeeControllerIT {
         String appleId = "1234567890";
         String jessicaId = "1";
 
-        ResponseEntity<DepositResource> mealResponse = testRestTemplate.postForEntity(
+        ResponseEntity<MealResource> mealResponse = testRestTemplate.postForEntity(
                 "/employees/" + jessicaId + "/meals",
                 new HttpEntity<>(
                         Map.of("amount", valueOf(1050)),
                         getDepositHeaders(createJWT(appleId, mealDate))
                 ),
-                DepositResource.class
+                MealResource.class
         );
 
         assertEquals(BAD_REQUEST, mealResponse.getStatusCode());

@@ -2,15 +2,15 @@ package com.example.backend.deposit.domain;
 
 import com.example.backend.deposit.domain.company.Company;
 import com.example.backend.deposit.domain.company.InsufficientCompanyBalanceException;
+import com.example.backend.utils.TriFunction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.function.Supplier;
 
-import static com.example.backend.deposit.domain.DepositType.GIFT;
-import static com.example.backend.deposit.domain.DepositType.MEAL;
 import static java.time.LocalDate.now;
 
 @Service
@@ -18,16 +18,16 @@ import static java.time.LocalDate.now;
 public class DepositService {
     private final Supplier<Clock> clockSupplier;
 
-    public Deposit sendGift(Company company, Long employeeId, BigDecimal amount) throws InsufficientCompanyBalanceException {
-        return sendDeposit(GIFT, company, employeeId, amount);
+    public Gift sendGift(Company company, Long employeeId, BigDecimal amount) throws InsufficientCompanyBalanceException {
+        return sendDeposit(Gift::new, company, employeeId, amount);
     }
 
-    public Deposit sendMeal(Company company, Long employeeId, BigDecimal amount) throws InsufficientCompanyBalanceException {
-        return sendDeposit(MEAL, company, employeeId, amount);
+    public Meal sendMeal(Company company, Long employeeId, BigDecimal amount) throws InsufficientCompanyBalanceException {
+        return sendDeposit(Meal::new, company, employeeId, amount);
     }
 
-    private Deposit sendDeposit(
-            DepositType type,
+    private <T extends Deposit> T sendDeposit(
+            TriFunction<T, BigDecimal, LocalDate, Long> constructor,
             Company company,
             Long employeeId,
             BigDecimal amount
@@ -37,6 +37,6 @@ public class DepositService {
 
         company.setBalance(company.getBalance().subtract(amount));
 
-        return new Deposit(type, amount, now(clockSupplier.get()), employeeId);
+        return constructor.apply(amount, now(clockSupplier.get()), employeeId);
     }
 }

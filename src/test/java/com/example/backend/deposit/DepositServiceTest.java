@@ -1,7 +1,8 @@
 package com.example.backend.deposit;
 
-import com.example.backend.deposit.domain.Deposit;
 import com.example.backend.deposit.domain.DepositService;
+import com.example.backend.deposit.domain.Gift;
+import com.example.backend.deposit.domain.Meal;
 import com.example.backend.deposit.domain.company.Company;
 import com.example.backend.deposit.domain.company.InsufficientCompanyBalanceException;
 import org.junit.jupiter.api.Test;
@@ -15,8 +16,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.function.Supplier;
 
-import static com.example.backend.deposit.domain.DepositType.GIFT;
-import static com.example.backend.deposit.domain.DepositType.MEAL;
 import static java.math.BigDecimal.valueOf;
 import static java.time.Clock.fixed;
 import static java.time.Month.JANUARY;
@@ -42,16 +41,14 @@ class DepositServiceTest {
         Long johnId = 1L;
 
         setDateTo(giftDate);
-        Deposit gift = depositService.sendGift(tesla, johnId, valueOf(100));
+        Gift gift = depositService.sendGift(tesla, johnId, valueOf(100));
         setDateTo(mealDate);
-        Deposit meal = depositService.sendMeal(tesla, johnId, valueOf(50));
+        Meal meal = depositService.sendMeal(tesla, johnId, valueOf(50));
 
         assertEquals(valueOf(850), tesla.getBalance());
 
-        assertEquals(giftDate, gift.receptionDate());
-        assertEquals(GIFT, gift.type());
-        assertEquals(mealDate, meal.receptionDate());
-        assertEquals(MEAL, meal.type());
+        assertEquals(giftDate, gift.getReceptionDate());
+        assertEquals(mealDate, meal.getReceptionDate());
     }
 
     @Test
