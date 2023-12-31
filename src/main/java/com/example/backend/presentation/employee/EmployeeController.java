@@ -1,10 +1,10 @@
 package com.example.backend.presentation.employee;
 
-import com.example.backend.application.deposit.DepositApplicationService;
 import com.example.backend.application.company.CompanyNotFoundException;
-import com.example.backend.domain.deposit.Deposit;
-import com.example.backend.domain.company.InsufficientCompanyBalanceException;
+import com.example.backend.application.deposit.DepositApplicationService;
 import com.example.backend.application.employee.EmployeeNotFoundException;
+import com.example.backend.domain.company.InsufficientCompanyBalanceException;
+import com.example.backend.domain.deposit.Deposit;
 import com.example.backend.presentation.deposit.DepositRequest;
 import com.example.backend.presentation.deposit.DepositResource;
 import com.example.backend.presentation.deposit.DepositResourceMapper;

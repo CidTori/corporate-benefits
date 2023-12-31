@@ -4,10 +4,10 @@ import com.example.backend.application.company.CompanyNotFoundException;
 import com.example.backend.application.company.CompanyRepository;
 import com.example.backend.application.employee.EmployeeNotFoundException;
 import com.example.backend.application.employee.EmployeeRepository;
-import com.example.backend.domain.deposit.Deposit;
-import com.example.backend.domain.deposit.DepositService;
 import com.example.backend.domain.company.Company;
 import com.example.backend.domain.company.InsufficientCompanyBalanceException;
+import com.example.backend.domain.deposit.Deposit;
+import com.example.backend.domain.deposit.DepositService;
 import com.example.backend.domain.employee.Employee;
 import com.example.backend.utils.ThrowingTriFunction;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +61,6 @@ public class DepositApplicationService {
 
         companyRepository.save(company);
         employeeRepository.save(employee);
-        //depositRepository.save(deposit);
 
         return deposit;
     }

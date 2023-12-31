@@ -14,5 +14,4 @@ public class DepositResource {
     private final DepositType type;
     private final BigDecimal amount;
     private final LocalDate receptionDate;
-    private final Long employeeId;
 }

@@ -1,15 +1,15 @@
 package com.example.backend;
 
-import com.example.backend.application.deposit.DepositApplicationService;
 import com.example.backend.application.company.CompanyNotFoundException;
 import com.example.backend.application.company.CompanyRepository;
+import com.example.backend.application.deposit.DepositApplicationService;
 import com.example.backend.application.employee.EmployeeNotFoundException;
 import com.example.backend.application.employee.EmployeeRepository;
+import com.example.backend.domain.company.Company;
+import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.deposit.Deposit;
 import com.example.backend.domain.deposit.DepositService;
 import com.example.backend.domain.deposit.DepositType;
-import com.example.backend.domain.company.Company;
-import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.employee.Employee;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,6 @@ import static java.time.Month.MARCH;
 import static java.time.ZoneId.systemDefault;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)

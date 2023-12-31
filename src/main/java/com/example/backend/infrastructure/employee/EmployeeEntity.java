@@ -2,16 +2,12 @@ package com.example.backend.infrastructure.employee;
 
 import com.example.backend.infrastructure.deposit.DepositEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.List;
 import java.util.Objects;
 
-import static jakarta.persistence.CascadeType.*;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -22,7 +18,9 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 public class EmployeeEntity {
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "employeeId", cascade = ALL) @ToString.Exclude
+    @ElementCollection
+    @CollectionTable(name = "deposit", joinColumns = @JoinColumn(name = "employee_id"))
+    @OrderColumn(name = "deposit_order")
     private List<DepositEntity> deposits;
 
     @Override

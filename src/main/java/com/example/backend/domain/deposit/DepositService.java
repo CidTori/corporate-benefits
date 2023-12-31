@@ -1,7 +1,7 @@
 package com.example.backend.domain.deposit;
 
-import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.company.Company;
+import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.employee.Employee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,7 @@ public class DepositService {
 
         company.setBalance(company.getBalance().subtract(amount));
 
-        Deposit deposit = new Deposit(null, type, amount, now(clockSupplier.get()), employee.getId());
+        Deposit deposit = new Deposit(type, amount, now(clockSupplier.get()));
         employee.getDeposits().add(deposit);
 
         return deposit;

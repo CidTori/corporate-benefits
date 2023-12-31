@@ -1,10 +1,10 @@
 package com.example.backend;
 
+import com.example.backend.domain.company.Company;
+import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.deposit.Deposit;
 import com.example.backend.domain.deposit.DepositService;
 import com.example.backend.domain.deposit.DepositType;
-import com.example.backend.domain.company.Company;
-import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.employee.Employee;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

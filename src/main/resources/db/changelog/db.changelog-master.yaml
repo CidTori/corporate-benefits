@@ -25,16 +25,19 @@ databaseChangeLog:
             tableName: deposit
             columns:
               - column:
-                  name: id
+                  name: employee_id
                   type: BIGINT
-                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
                     primaryKeyName: pk_deposit
               - column:
-                  name: employee_id
-                  type: BIGINT
+                  name: deposit_order
+                  type: INT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_deposit
               - column:
                   name: type
                   type: TINYINT
