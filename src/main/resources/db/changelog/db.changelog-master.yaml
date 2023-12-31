@@ -22,6 +22,33 @@ databaseChangeLog:
       author: demo
       changes:
         - createTable:
+            tableName: employee
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+  - changeSet:
+      id: 3
+      author: demo
+      changes:
+        - createTable:
+            tableName: deposit_type
+            columns:
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+  - changeSet:
+      id: 4
+      author: demo
+      changes:
+        - createTable:
             tableName: deposit
             columns:
               - column:
@@ -40,7 +67,7 @@ databaseChangeLog:
                     primaryKeyName: pk_deposit
               - column:
                   name: type
-                  type: TINYINT
+                  type: VARCHAR(255)
               - column:
                   name: amount
                   type: DECIMAL
@@ -51,23 +78,38 @@ databaseChangeLog:
                   name: reception_date
                   type: DATE
   - changeSet:
-      id: 3
+      id: 5
       author: demo
       changes:
-        - createTable:
-            tableName: employee
+        - addForeignKeyConstraint:
+            constraintName: FK_DEPOSIT_ON_EMPLOYEE
+            baseTableName: deposit
+            baseColumnNames: employee_id
+            referencedTableName: employee
+            referencedColumnNames: id
+  - changeSet:
+      id: 6
+      author: demo
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: FK_DEPOSIT_ON_DEPOSIT_TYPE
+            baseTableName: deposit
+            baseColumnNames: type
+            referencedTableName: deposit_type
+            referencedColumnNames: name
+  - changeSet:
+      id: 7
+      author: demo
+      changes:
+        - insert:
+            tableName: deposit_type
             columns:
               - column:
-                  name: id
-                  type: BIGINT
-                  autoIncrement: true
-                  constraints:
-                    nullable: false
-                    primaryKey: true
-                    primaryKeyName: pk_employee
-        - addForeignKeyConstraint:
-            baseColumnNames: employee_id
-            baseTableName: deposit
-            constraintName: FK_DEPOSIT_ON_EMPLOYEE
-            referencedColumnNames: id
-            referencedTableName: employee
+                  name: name
+                  value: "GIFT"
+        - insert:
+            tableName: deposit_type
+            columns:
+              - column:
+                  name: name
+                  value: "MEAL"

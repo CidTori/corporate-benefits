@@ -1,30 +1,22 @@
-package com.example.backend.infrastructure.employee;
+package com.example.backend.infrastructure.deposit;
 
-import com.example.backend.infrastructure.deposit.DepositEntity;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.util.List;
 import java.util.Objects;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
-
 @Entity
-@Table(name = "employee")
+@Table(name = "deposit_type")
 @Getter @Setter
 @ToString
 @RequiredArgsConstructor
-public class EmployeeEntity {
-    @Id @GeneratedValue(strategy = IDENTITY)
-    private Long id;
-    @ElementCollection
-    @CollectionTable(name = "deposit", joinColumns = @JoinColumn(name = "employee_id"))
-    @OrderColumn(name = "deposit_order")
-    private List<DepositEntity> deposits;
+@AllArgsConstructor
+public class DepositTypeEntity {
+    @Id
+    private String name;
 
     @Override
     public final boolean equals(Object o) {
@@ -33,8 +25,8 @@ public class EmployeeEntity {
         Class<?> oEffectiveClass = o instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        EmployeeEntity that = (EmployeeEntity) o;
-        return getId() != null && Objects.equals(getId(), that.getId());
+        DepositTypeEntity that = (DepositTypeEntity) o;
+        return getName() != null && Objects.equals(getName(), that.getName());
     }
 
     @Override
