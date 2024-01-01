@@ -3,9 +3,7 @@ package com.example.backend.infrastructure.employee;
 import com.example.backend.infrastructure.deposit.DepositEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.List;
@@ -16,14 +14,12 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(name = "employee")
 @Getter @Setter
-@ToString
-@RequiredArgsConstructor
 public class EmployeeEntity {
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @ElementCollection
     @CollectionTable(name = "deposit", joinColumns = @JoinColumn(name = "employee_id"))
-    @OrderColumn(name = "deposit_order")
+    @OrderColumn(name = "index")
     private List<DepositEntity> deposits;
 
     @Override

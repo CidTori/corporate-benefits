@@ -10,7 +10,6 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 @Mapper(componentModel = SPRING)
 public interface EmployeeEntityMapper {
     Employee toDomain(EmployeeEntity employee);
-
     EmployeeEntity toEntity(Employee employee);
 
     default DepositTypeEntity toEntity(DepositType depositType) {

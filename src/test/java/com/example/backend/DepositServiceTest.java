@@ -4,7 +4,6 @@ import com.example.backend.domain.company.Company;
 import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.deposit.Deposit;
 import com.example.backend.domain.deposit.DepositService;
-import com.example.backend.domain.deposit.DepositType;
 import com.example.backend.domain.employee.Employee;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,6 +17,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.function.Supplier;
 
+import static com.example.backend.domain.deposit.DepositType.GIFT;
+import static com.example.backend.domain.deposit.DepositType.MEAL;
 import static java.math.BigDecimal.valueOf;
 import static java.time.Clock.fixed;
 import static java.time.Month.JANUARY;
@@ -42,20 +43,21 @@ class DepositServiceTest {
         LocalDate giftEndDate = giftDate.plusYears(1);
         LocalDate mealDate = giftDate.plusMonths(1);
         LocalDate mealEndDate = LocalDate.of(mealDate.plusYears(1).getYear(), MARCH, 1);
-        Company tesla = new Company(1234567890L, valueOf(1000));
+        Company tesla = new Company(1234567890L);
+        tesla.setBalance(valueOf(1000));
         Employee john = new Employee(1L);
 
         setDateTo(giftDate);
-        Deposit gift = depositService.sendGift(tesla, john, valueOf(100));
+        Deposit gift = depositService.sendDeposit(GIFT, tesla, john, valueOf(100));
         setDateTo(mealDate);
-        Deposit meal = depositService.sendMeal(tesla, john, valueOf(50));
+        Deposit meal = depositService.sendDeposit(MEAL, tesla, john, valueOf(50));
 
         assertEquals(valueOf(850), tesla.getBalance());
 
-        assertEquals(giftDate, gift.getReceptionDate());
-        Assertions.assertEquals(DepositType.GIFT, gift.getType());
-        assertEquals(mealDate, meal.getReceptionDate());
-        Assertions.assertEquals(DepositType.MEAL, meal.getType());
+        assertEquals(giftDate, gift.receptionDate());
+        Assertions.assertEquals(GIFT, gift.type());
+        assertEquals(mealDate, meal.receptionDate());
+        Assertions.assertEquals(MEAL, meal.type());
 
         assertEquals(valueOf(150), john.getBalance(giftEndDate.minusDays(1)));
         assertEquals(valueOf(50), john.getBalance(giftEndDate));
@@ -65,12 +67,12 @@ class DepositServiceTest {
 
     @Test
     void sendMealDeposit_ko() {
-        final Company apple = new Company(1234567890L, valueOf(0));
+        final Company apple = new Company(1234567890L);
         final Employee jessica = new Employee(1L);
 
         assertThrows(
                 InsufficientCompanyBalanceException.class,
-                () -> depositService.sendMeal(apple, jessica, valueOf(50))
+                () -> depositService.sendDeposit(MEAL, apple, jessica, valueOf(50))
         );
     }
 

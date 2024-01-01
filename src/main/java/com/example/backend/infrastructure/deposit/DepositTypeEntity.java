@@ -3,7 +3,10 @@ package com.example.backend.infrastructure.deposit;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
@@ -11,7 +14,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "deposit_type")
 @Getter @Setter
-@ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class DepositTypeEntity {

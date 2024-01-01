@@ -8,8 +8,8 @@ import com.example.backend.domain.company.Company;
 import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.deposit.Deposit;
 import com.example.backend.domain.deposit.DepositService;
+import com.example.backend.domain.deposit.DepositType;
 import com.example.backend.domain.employee.Employee;
-import com.example.backend.utils.ThrowingTriFunction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,29 +35,11 @@ public class DepositApplicationService {
     }
 
     @Transactional
-    public Deposit sendGift(Long companyId, Long employeeId, BigDecimal amount) throws InsufficientCompanyBalanceException, CompanyNotFoundException, EmployeeNotFoundException {
-        return sendDeposit(depositService::sendGift, companyId, employeeId, amount);
-    }
-
-    @Transactional
-    public Deposit sendMeal(Long companyId, Long employeeId, BigDecimal amount) throws InsufficientCompanyBalanceException, CompanyNotFoundException, EmployeeNotFoundException {
-        return sendDeposit(depositService::sendMeal, companyId, employeeId, amount);
-    }
-
-    private Deposit sendDeposit(
-            ThrowingTriFunction<InsufficientCompanyBalanceException, Deposit, Company, Employee, BigDecimal> sendingDeposit,
-            Long companyId,
-            Long employeeId,
-            BigDecimal amount
-    ) throws
-            CompanyNotFoundException,
-            EmployeeNotFoundException,
-            InsufficientCompanyBalanceException
-    {
+    public Deposit sendDeposit(DepositType type, Long companyId, Long employeeId, BigDecimal amount) throws InsufficientCompanyBalanceException, CompanyNotFoundException, EmployeeNotFoundException {
         final Company company = companyRepository.findById(companyId).orElseThrow(() -> new CompanyNotFoundException("Company with id " + companyId + " not found"));
         final Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee with id " + employeeId + " not found"));
 
-        Deposit deposit = sendingDeposit.apply(company, employee, amount);
+        Deposit deposit = depositService.sendDeposit(type, company, employee, amount);
 
         companyRepository.save(company);
         employeeRepository.save(employee);

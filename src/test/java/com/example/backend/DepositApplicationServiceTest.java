@@ -9,7 +9,6 @@ import com.example.backend.domain.company.Company;
 import com.example.backend.domain.company.InsufficientCompanyBalanceException;
 import com.example.backend.domain.deposit.Deposit;
 import com.example.backend.domain.deposit.DepositService;
-import com.example.backend.domain.deposit.DepositType;
 import com.example.backend.domain.employee.Employee;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +24,8 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import static com.example.backend.domain.deposit.DepositType.GIFT;
+import static com.example.backend.domain.deposit.DepositType.MEAL;
 import static java.math.BigDecimal.valueOf;
 import static java.time.Clock.fixed;
 import static java.time.Month.JANUARY;
@@ -66,22 +67,23 @@ class DepositApplicationServiceTest {
         LocalDate mealEndDate = LocalDate.of(mealDate.plusYears(1).getYear(), MARCH, 1);
         Long teslaId = 1234567890L;
         Long johnId = 1L;
-        Company tesla = new Company(teslaId, valueOf(1000));
+        Company tesla = new Company(teslaId);
+        tesla.setBalance(valueOf(1000));
         Employee john = new Employee(johnId);
         when(companyRepository.findById(teslaId)).thenReturn(Optional.of(tesla));
         when(employeeRepository.findById(johnId)).thenReturn(Optional.of(john));
 
         setDateTo(giftDate);
-        Deposit gift = depositApplicationService.sendGift(teslaId, johnId, valueOf(100));
+        Deposit gift = depositApplicationService.sendDeposit(GIFT, teslaId, johnId, valueOf(100));
         setDateTo(mealDate);
-        Deposit meal = depositApplicationService.sendMeal(teslaId, johnId, valueOf(50));
+        Deposit meal = depositApplicationService.sendDeposit(MEAL, teslaId, johnId, valueOf(50));
 
         assertEquals(valueOf(850), tesla.getBalance());
 
-        assertEquals(giftDate, gift.getReceptionDate());
-        Assertions.assertEquals(DepositType.GIFT, gift.getType());
-        assertEquals(mealDate, meal.getReceptionDate());
-        Assertions.assertEquals(DepositType.MEAL, meal.getType());
+        assertEquals(giftDate, gift.receptionDate());
+        Assertions.assertEquals(GIFT, gift.type());
+        assertEquals(mealDate, meal.receptionDate());
+        Assertions.assertEquals(MEAL, meal.type());
 
         setDateTo(giftEndDate.minusDays(1));
         assertEquals(valueOf(150), depositApplicationService.getBalance(johnId));
@@ -97,14 +99,14 @@ class DepositApplicationServiceTest {
     void sendMealDeposit_ko() {
         Long appleId = 1234567890L;
         Long jessicaId = 1L;
-        Company apple = new Company(appleId, valueOf(0));
+        Company apple = new Company(appleId);
         Employee jessica = new Employee(jessicaId);
         when(companyRepository.findById(appleId)).thenReturn(Optional.of(apple));
         when(employeeRepository.findById(jessicaId)).thenReturn(Optional.of(jessica));
 
         assertThrows(
                 InsufficientCompanyBalanceException.class,
-                () -> depositApplicationService.sendMeal(appleId, jessicaId, valueOf(50))
+                () -> depositApplicationService.sendDeposit(MEAL, appleId, jessicaId, valueOf(50))
         );
     }
 

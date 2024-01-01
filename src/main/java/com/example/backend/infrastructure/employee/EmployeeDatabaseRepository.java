@@ -3,11 +3,11 @@ package com.example.backend.infrastructure.employee;
 import com.example.backend.application.employee.EmployeeRepository;
 import com.example.backend.domain.employee.Employee;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class EmployeeDatabaseRepository implements EmployeeRepository {
     private final EmployeeEntityRepository employeeRepository;

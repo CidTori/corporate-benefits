@@ -1,13 +1,13 @@
 package com.example.backend.domain.company;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
+import static java.math.BigDecimal.valueOf;
+
 @Data
-@AllArgsConstructor
 public class Company {
     private final Long id;
-    private BigDecimal balance;
+    private BigDecimal balance = valueOf(0);
 }

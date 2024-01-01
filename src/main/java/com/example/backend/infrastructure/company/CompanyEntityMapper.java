@@ -8,6 +8,5 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 @Mapper(componentModel = SPRING)
 public interface CompanyEntityMapper {
     Company toDomain(CompanyEntity companyEntity);
-
     CompanyEntity toEntity(Company company);
 }

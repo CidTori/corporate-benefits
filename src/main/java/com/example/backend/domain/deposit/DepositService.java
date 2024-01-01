@@ -10,8 +10,6 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.util.function.Supplier;
 
-import static com.example.backend.domain.deposit.DepositType.GIFT;
-import static com.example.backend.domain.deposit.DepositType.MEAL;
 import static java.time.LocalDate.now;
 
 @Service
@@ -19,15 +17,7 @@ import static java.time.LocalDate.now;
 public class DepositService {
     private final Supplier<Clock> clockSupplier;
 
-    public Deposit sendGift(Company company, Employee employee, BigDecimal amount) throws InsufficientCompanyBalanceException {
-        return sendDeposit(GIFT, company, employee, amount);
-    }
-
-    public Deposit sendMeal(Company company, Employee employee, BigDecimal amount) throws InsufficientCompanyBalanceException {
-        return sendDeposit(MEAL, company, employee, amount);
-    }
-
-    private Deposit sendDeposit(
+    public Deposit sendDeposit(
             DepositType type,
             Company company,
             Employee employee,

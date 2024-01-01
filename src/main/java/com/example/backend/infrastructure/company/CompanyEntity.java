@@ -5,9 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
@@ -18,8 +16,6 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(name = "company")
 @Getter @Setter
-@ToString
-@RequiredArgsConstructor
 public class CompanyEntity {
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;

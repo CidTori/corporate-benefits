@@ -59,7 +59,7 @@ databaseChangeLog:
                     primaryKey: true
                     primaryKeyName: pk_deposit
               - column:
-                  name: deposit_order
+                  name: index
                   type: INT
                   constraints:
                     nullable: false
