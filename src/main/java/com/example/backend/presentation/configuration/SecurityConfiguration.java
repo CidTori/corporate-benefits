@@ -14,11 +14,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
-//@EnableMethodSecurity(jsr250Enabled = true)
 public class SecurityConfiguration {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        //http.authorizeHttpRequests(requests -> requests.anyRequest().authenticated());
         http.oauth2ResourceServer(resourceServer -> resourceServer.jwt(withDefaults()));
 
         return http.build();

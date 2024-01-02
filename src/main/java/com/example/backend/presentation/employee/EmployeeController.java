@@ -30,7 +30,6 @@ public class EmployeeController {
 
     @GetMapping("/employees/{employeeId}/balance")
     @PreAuthorize("permitAll()")
-    //@PermitAll
     @SecurityRequirements
     public EmployeeBalanceResource getBalance(@PathVariable Long employeeId) {
         try {
@@ -65,8 +64,11 @@ public class EmployeeController {
             DepositRequest request
     ) {
         try {
-            Long companyId = Long.valueOf(authentication.getName());
-            Deposit deposit = depositApplicationService.sendDeposit(type, companyId, employeeId, request.amount());
+            final String subject = authentication.getName();
+            if (!subject.matches("\\d+")) throw new ResponseStatusException(BAD_REQUEST, "Company ID format invalid");
+
+            final Long companyId = Long.valueOf(subject);
+            final Deposit deposit = depositApplicationService.sendDeposit(type, companyId, employeeId, request.amount());
             return depositResourceMapper.toResource(deposit);
         } catch (InsufficientCompanyBalanceException ex) {
             throw new ResponseStatusException(BAD_REQUEST, "Company balance insufficient", ex);

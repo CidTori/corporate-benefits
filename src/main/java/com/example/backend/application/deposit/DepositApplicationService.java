@@ -29,15 +29,15 @@ public class DepositApplicationService {
     private final Supplier<Clock> clockSupplier;
 
     public BigDecimal getBalance(Long employeeId) throws EmployeeNotFoundException {
-        Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee with id " + employeeId + " not found"));
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException(employeeId));
 
         return employee.getBalance(now(clockSupplier.get()));
     }
 
     @Transactional
     public Deposit sendDeposit(DepositType type, Long companyId, Long employeeId, BigDecimal amount) throws InsufficientCompanyBalanceException, CompanyNotFoundException, EmployeeNotFoundException {
-        final Company company = companyRepository.findById(companyId).orElseThrow(() -> new CompanyNotFoundException("Company with id " + companyId + " not found"));
-        final Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee with id " + employeeId + " not found"));
+        final Company company = companyRepository.findById(companyId).orElseThrow(() -> new CompanyNotFoundException(companyId));
+        final Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException(employeeId));
 
         Deposit deposit = depositService.sendDeposit(type, company, employee, amount);
 

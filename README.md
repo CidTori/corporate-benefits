@@ -27,9 +27,9 @@ On Windows
 Swagger-UI is accessible at http://localhost:8080/swagger-ui.html
 H2 Console is accessible at http://localhost:8080/h2-console
 
-The database is already populated with employee `1` and company `1234567890` (default subject on jwt.io).
+The database is already populated with employee `1` and company `1234567890` (default subject on [JWT.IO](https://jwt.io/)).
 
-The JWT secret is `your-256-bit-secretyour-256-bit-secret` (twice the default secret on jwt.io, to actually reach 256 bit).
+The JWT secret is `your-256-bit-secretyour-256-bit-secret` (twice the default secret on [JWT.IO](https://jwt.io/), to actually reach 256 bit).
 
 ## Contributing
 
